@@ -161,7 +161,7 @@ platform:
         # -- should be left blank if default storage class was defined defined at cluster should be used
         defaultStorageClass:
     captchaSecret:
-      # -- leave empty to use existing secret specified below 
+      # -- leave empty to use existing secret specified below
       literal: ""
       secret:
         name: nmaas-captcha-secret-secret
@@ -215,7 +215,7 @@ postfix:
       username:
         # -- leave empty to use existing secret
         literal: ""
-        secret: 
+        secret:
           key: smtpUsername
       password:
         # -- leave empty to use existing secret
@@ -280,7 +280,8 @@ janitor:
         key: secret
     gitlabApiUrl: http://nmaas-gitlab-webservice-default:8181/api/v4
 
-postgresql: # settings for in-cluster postgresql
+# -- settings for in-cluster postgresql
+postgresql:
   install: true
   postgresqlUsername: nmaas
   postgresqlPassword: nmaas
