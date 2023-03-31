@@ -15,7 +15,7 @@ global:
   # -- currently not needed, for future use
   registrysecret: nmaas-registry
   demoDeployment: false
-  
+
 platform:
   enabled: true
   name: nmaas-platform
@@ -83,8 +83,10 @@ platform:
     serviceDeploymentCheckTimeout: 600
     sendAppInstanceFailureEmails: false
     appInstanceFailureEmailList:
-    serviceUpgradeCron: "0 0 5 * * ?" # example "0 0 5 * * ?" - every day at 5:00 AM
-    serviceUpgradeSummaryCron: "0 0 6 * * ?" # example "0 0 6 * * ?" - every day at 6:00 AM
+    # -- example "0 0 5 * * ?" - every day at 5:00 AM
+    serviceUpgradeCron: "0 0 5 * * ?"
+    # -- example "0 0 6 * * ?" - every day at 6:00 AM
+    serviceUpgradeSummaryCron: "0 0 6 * * ?"
     serviceUpgradeInterval: 24
     apiDocsEnabled: false
     showDomainRegistrationSelector: true
@@ -101,7 +103,8 @@ platform:
           key: secret
       timeout: 15
     adminEmail: admin@example.com
-    postgresql: # only required if an external postgresql instance is used (when postgresql.install is false)
+    # -- only required if an external postgresql instance is used (when postgresql.install is false)
+    postgresql:
       hostname: nmaas-postgresql
       database: nmaas
       username: nmaas
@@ -144,7 +147,8 @@ platform:
           tlsSupported: true
           # -- flag indicating if a dedicated ingress controller is deploy in every customer namespace
           perDomain: false
-        certificate: # TLS certificate related option are mandatory if tlsSupported flag is set to true
+        # -- TLS certificate related option are mandatory if tlsSupported flag is set to true
+        certificate:
           # -- two options possible: USE_WILDCARD or USE_LETSENCRYPT
           configOption: USE_WILDCARD
           # -- depending on the selected option, either certificate issuer name or name of secret object holding the certificate
@@ -198,7 +202,8 @@ postfix:
   type: ClusterIP
   properties:
     hostname: "mailer.example.com"
-    smtp: # only required if smtp image is used
+    # -- only required if smtp image is used
+    smtp:
       port: 587
       fromAddress: 'noreply@example.com'
       secretName: nmaas-smtp-secret
