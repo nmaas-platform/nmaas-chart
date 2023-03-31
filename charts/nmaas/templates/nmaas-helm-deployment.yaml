@@ -1,0 +1,59 @@
+{{- if .Values.helm.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.helm.name }}
+  labels:
+    app: {{ .Values.helm.name }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.helm.name }}
+  strategy: 
+    type: Recreate
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.helm.name }}
+    spec:
+      volumes:
+      - name: {{ .Values.helm.persistence.existingClaim | default (printf "%s-helm" (include "fullname" .)) | quote }}
+      {{- if .Values.helm.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.helm.persistence.existingClaim | default (printf "%s-helm" (include "fullname" .)) | quote }}
+      {{- else }}
+        emptyDir: {}
+      {{- end }}
+      - name: helm-access-key
+        secret:
+          secretName: {{ .Values.global.helmAccessKeyPublic }}
+      {{- if .Values.helm.serviceAccountName }}
+      serviceAccountName: {{ .Values.helm.serviceAccountName }}
+      {{- end }}
+      containers:
+      - name: {{ .Chart.Name }}
+        securityContext:
+          capabilities:
+            add:
+              - SYS_CHROOT
+        image: "{{ .Values.helm.image.repository }}:{{ .Values.helm.image.tag }}"
+        imagePullPolicy: {{ .Values.helm.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.helm.port }}
+          protocol: TCP
+        env:
+          - name: SSH_USERS
+            value: {{ .Values.helm.properties.users }}
+        volumeMounts:
+        - name: helm-access-key
+          mountPath: /keys
+        - mountPath: /home/helm/.config/helm
+          name: {{ .Values.helm.persistence.existingClaim | default (printf "%s-helm" (include "fullname" .)) | quote }}
+          subPath: helm-config
+      imagePullSecrets:
+      - name: {{ .Values.global.registrysecret }}
+{{- end -}}

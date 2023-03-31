@@ -1,0 +1,6 @@
+dependencies:
+- name: postgresql
+  repository: https://artifactory.software.geant.org/artifactory/nmaas-helm-mirror
+  version: 10.16.2
+digest: sha256:94a23914d811a636356a9ee47d6910c3159225b69aef93bc4d9d56a1055b28a5
+generated: "2022-08-30T08:59:05.078630031+02:00"

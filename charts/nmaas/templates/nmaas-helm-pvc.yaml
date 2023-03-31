@@ -1,0 +1,17 @@
+{{- if and (.Values.helm.persistence.enabled) (not .Values.helm.persistence.existingClaim) }}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: "{{ template "fullname" . }}-helm"
+  labels:
+    app: nmaas-helm
+spec:
+  accessModes:
+    - "{{ .Values.helm.persistence.accessMode }}"
+  {{- if .Values.helm.persistence.storageClass }}
+  storageClassName: "{{ .Values.helm.persistence.storageClass }}"
+  {{- end}}
+  resources:
+    requests:
+      storage: "{{ .Values.helm.persistence.size }}"
+{{- end }}

@@ -1,0 +1,44 @@
+{{- if .Values.janitor.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.janitor.name }}
+  labels:
+    app: {{ .Values.janitor.name }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.janitor.name }}
+  strategy: 
+    type: Recreate
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.janitor.name }}
+    spec:
+      serviceAccount: {{ .Values.janitor.serviceAccountName }}
+      volumes:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.janitor.image.repository }}:{{ .Values.janitor.image.tag }}"
+        imagePullPolicy: {{ .Values.janitor.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.janitor.port}}
+          protocol: TCP
+        env:
+          - name: SERVER_PORT
+            value: {{ .Values.janitor.port | quote }}
+          - name: GITLAB_URL
+            value: {{ .Values.janitor.properties.gitlabApiUrl | default "http://nmaas-gitlab-unicorn:8181/api/v4" }}
+          - name: GITLAB_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.janitor.properties.gitlabToken.secret.name }}
+                key: {{ .Values.janitor.properties.gitlabToken.secret.key }}
+      imagePullSecrets:
+      - name: {{ .Values.global.registrysecret }}
+{{- end -}}

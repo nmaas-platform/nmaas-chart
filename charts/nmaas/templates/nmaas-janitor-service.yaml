@@ -1,0 +1,19 @@
+{{- if .Values.janitor.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.janitor.name }}
+  labels:
+    app: {{ .Values.janitor.name }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+spec:
+  type: {{ .Values.janitor.type }}
+  ports:
+  - port: {{ .Values.janitor.port }}
+    targetPort: {{ .Values.janitor.targetPort }}
+    protocol: TCP
+  selector:
+    app: {{ .Values.janitor.name }}
+{{- end -}}

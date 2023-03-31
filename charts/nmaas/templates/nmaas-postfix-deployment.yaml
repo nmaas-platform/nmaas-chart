@@ -1,0 +1,51 @@
+{{- if .Values.postfix.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.postfix.name }}
+  labels:
+    app: {{ .Values.postfix.name }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.postfix.name }}
+  strategy: 
+    type: Recreate
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.postfix.name }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.postfix.image.repository }}:{{ .Values.postfix.image.tag }}"
+        imagePullPolicy: {{ .Values.postfix.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.postfix.port }}
+        env:
+          - name: HOSTNAME
+            value: {{ .Values.postfix.properties.hostname | default (printf "mailer.%s" .Values.global.nmaasDomain) | quote }}
+          - name: SMTP_HOST
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.postfix.properties.smtp.secretName }}
+                key: {{ .Values.postfix.properties.smtp.host.secret.key }}
+          - name: SMTP_PORT
+            value: {{ .Values.postfix.properties.smtp.port | quote }}
+          - name: SMTP_FROM_ADDRESS
+            value: {{ .Values.postfix.properties.smtp.fromAddress | quote }}
+          - name: SMTP_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.postfix.properties.smtp.secretName }}
+                key: {{ .Values.postfix.properties.smtp.username.secret.key }}
+          - name: SMTP_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.postfix.properties.smtp.secretName }}
+                key: {{ .Values.postfix.properties.smtp.password.secret.key }}
+{{- end -}}

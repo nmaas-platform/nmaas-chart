@@ -1,0 +1,54 @@
+{{- if .Values.sp.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.sp.name }}
+  labels:
+    app: {{ .Values.sp.name }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.sp.name }}
+  strategy: 
+    type: Recreate
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.sp.name }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.sp.image.repository }}:{{ .Values.sp.image.tag }}"
+        imagePullPolicy: {{ .Values.sp.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.sp.port }}
+          protocol: TCP
+        env:
+          - name: SP_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.platform.properties.sso.encryptionSecret.secret.name }}
+                key: {{ .Values.platform.properties.sso.encryptionSecret.secret.key }}
+          - name: SP_URL
+            {{- if .Values.sp.tls }}
+            value: {{ .Values.sp.host | default (printf "https://%s/" .Values.global.nmaasDomain) | quote}}
+            {{- else }}
+            value: {{ .Values.sp.host | default (printf "http://%s/" .Values.global.nmaasDomain) | quote}}
+            {{- end }}
+          - name: PORTAL_URL
+            value: {{ .Values.sp.properties.portalUrl | default .Values.global.nmaasDomain }}
+          - name: IDP_NAME
+            value: {{ .Values.sp.properties.idp.name }}
+          - name: IDP_URI
+            value: {{ .Values.sp.properties.idp.uri | quote}}
+          - name: SP_HOST
+            value: {{ .Values.sp.host | default .Values.global.nmaasDomain | quote }}
+          - name: SP_USED_ID
+            value: {{ .Values.sp.properties.idp.userId }}
+      imagePullSecrets:
+      - name: {{ .Values.global.registrysecret }}
+{{- end -}}

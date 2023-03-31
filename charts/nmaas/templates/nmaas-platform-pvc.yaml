@@ -1,0 +1,17 @@
+{{- if and (.Values.platform.persistence.enabled) (not .Values.platform.persistence.existingClaim) }}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: "{{ template "fullname" . }}-platform"
+  labels:
+    app: nmaas-platform
+spec:
+  accessModes:
+    - "{{ .Values.platform.persistence.accessMode }}"
+  {{- if .Values.platform.persistence.storageClass }}
+  storageClassName: "{{ .Values.platform.persistence.storageClass }}"
+  {{- end}}
+  resources:
+    requests:
+      storage: "{{ .Values.platform.persistence.size }}"
+{{- end }}

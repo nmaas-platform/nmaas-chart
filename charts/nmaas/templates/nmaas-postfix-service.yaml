@@ -1,0 +1,19 @@
+{{- if .Values.postfix.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.postfix.name }}
+  labels:
+    app: {{ .Values.postfix.name }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+spec:
+  type: {{ .Values.postfix.type }}
+  ports:
+  - port: {{ .Values.postfix.port }}
+    targetPort: {{ .Values.postfix.port }}
+    protocol: TCP
+  selector:
+    app: {{ .Values.postfix.name }}
+{{- end -}}

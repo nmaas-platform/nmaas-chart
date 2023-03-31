@@ -1,0 +1,19 @@
+{{- if .Values.platform.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.platform.name }}
+  labels:
+    app: {{ .Values.platform.name }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+spec:
+  type: {{ .Values.platform.type }}
+  ports:
+  - port: {{ .Values.platform.port }}
+    targetPort: {{ .Values.platform.targetPort }}
+    protocol: TCP
+  selector:
+    app: {{ .Values.platform.name }}
+{{- end -}}

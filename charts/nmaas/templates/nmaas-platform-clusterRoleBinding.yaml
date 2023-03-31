@@ -1,0 +1,13 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: nmaas-platform
+subjects:
+- kind: ServiceAccount
+  name: nmaas-platform
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: ClusterRole
+  name: nmaas-shell-role
+  apiGroup: rbac.authorization.k8s.io
+

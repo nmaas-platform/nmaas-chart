@@ -1,0 +1,218 @@
+{{- if .Values.platform.enabled -}}
+{{- $kubeVersion := .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.platform.name }}
+  labels:
+    app: {{ .Values.platform.name }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.platform.name }}
+  strategy: 
+    type: Recreate
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.platform.name }}
+    spec:
+      serviceAccount: nmaas-platform
+      volumes:
+      - name: platform-data
+      {{- if .Values.platform.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.platform.persistence.existingClaim | default (printf "%s-platform" (include "fullname" .)) | quote }}
+      {{- else }}
+        emptyDir: {}
+      {{- end }}
+      - name: helm-access-key
+        secret:
+          secretName: {{ .Values.global.helmAccessKeyPrivate }}
+          defaultMode: 384
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.platform.image.repository }}:{{ .Values.platform.image.tag }}"
+        imagePullPolicy: {{ .Values.platform.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.platform.port }}
+          protocol: TCP
+        livenessProbe:
+{{ toYaml .Values.platform.livenessProbe | indent 10 }}
+        readinessProbe:
+{{ toYaml .Values.platform.readinessProbe | indent 10 }}
+        {{- if semverCompare ">=1.19-0" $kubeVersion }}
+        startupProbe:
+{{ toYaml .Values.platform.startupProbe | indent 10 }}
+        {{- end }}
+        volumeMounts:
+        - name: platform-data
+          mountPath: /nmaas/files
+          subPath: platform-logs
+        - name: helm-access-key
+          mountPath: /nmaas/.ssh
+        env:
+          {{- if .Values.postgresql.install }}
+          - name: POSTGRESQL_HOST
+            value: {{ .Release.Name }}-postgresql
+          - name: POSTGRESQL_DBNAME
+            value: {{ .Values.postgresql.postgresqlDatabase }}
+          - name: POSTGRESQL_USERNAME
+            value: {{ .Values.postgresql.postgresqlUsername }}
+          - name: POSTGRESQL_PASSWORD
+            value: {{ .Values.postgresql.postgresqlPassword }}
+          {{- else }}
+          - name: POSTGRESQL_HOST
+            value: {{ .Values.platform.properties.postgresql.hostname }}
+          - name: POSTGRESQL_DBNAME
+            value: {{ .Values.platform.properties.postgresql.database }}
+          - name: POSTGRESQL_USERNAME
+            value: {{ .Values.platform.properties.postgresql.username }}
+          - name: POSTGRESQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.platform.properties.postgresql.password.secret.name }}
+                key: {{ .Values.platform.properties.postgresql.password.secret.key }}
+          {{- end }}
+          - name: SSO_URL_LOGIN
+            value: {{ .Values.platform.properties.sso.urlLogin | default (printf "https://%s/sso" .Values.global.nmaasDomain) | quote }}
+          - name: SSO_URL_LOGOUT
+            value: {{ .Values.platform.properties.sso.urlLogout | default (printf "https://%s/Shibboleth.sso/Logout" .Values.global.nmaasDomain) | quote }}
+          - name: ADMIN_EMAIL
+            value: {{ .Values.platform.properties.adminEmail }}
+          - name: ADMIN_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.platform.adminPassword.secret.name }}
+                key: {{ .Values.platform.adminPassword.secret.key }}
+          - name: PLATFORM_BASEURL
+          {{- if .Values.global.demoDeployment }}
+            value: "http://{{ .Values.platform.name }}:{{ .Values.platform.port }}"
+          {{- else if .Values.platform.tls }}
+            value: {{ (printf "https://%s" (.Values.platform.host | default .Values.global.nmaasDomain)) | quote }}
+          {{- else }}
+            value: {{ (printf "http://%s" (.Values.platform.host | default .Values.global.nmaasDomain)) | quote }}
+          {{- end }}
+          - name: PLATFORM_PORT
+            value: "{{ .Values.platform.port }}"
+          - name: PORTAL_HOST
+            value: {{ .Values.global.portalHost | default .Values.global.nmaasDomain | quote }}
+          - name: DEPLOYMENT_CHECK_INTERVAL
+            value: {{ .Values.platform.properties.serviceDeploymentCheckInterval | quote }}
+          - name: DEPLOYMENT_CHECK_TIMEOUT
+            value: {{ .Values.platform.properties.serviceDeploymentCheckTimeout | quote }}
+          - name: JANITOR_ADDRESS
+            value: {{ .Values.platform.properties.janitorHost | default .Values.janitor.name }}
+          - name: JANITOR_PORT
+            value: {{ .Values.platform.properties.janitorPort | default .Values.janitor.targetPort | quote }}
+          - name: API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.platform.apiSecret.secret.name }}
+                key: {{ .Values.platform.apiSecret.secret.key }}
+          {{- if .Values.platform.properties.sso.enabled }}
+          - name: SSO_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.platform.properties.sso.encryptionSecret.secret.name }}
+                key: {{ .Values.platform.properties.sso.encryptionSecret.secret.key }}
+          - name: SSO_TIMEOUT
+            value: "{{ .Values.platform.properties.sso.timeout }}"
+          {{- end }}
+          - name: SMTP_LOGIN
+            value: {{ .Values.platform.properties.smtp.login }}
+          - name: SMTP_PASSWORD
+            value: {{ .Values.platform.properties.smtp.password }}
+          - name: SMTP_HOST
+            value: {{ .Values.platform.properties.smtp.host | default .Values.postfix.name }}
+          - name: SMTP_PORT
+            value: {{ .Values.platform.properties.smtp.port | default .Values.postfix.port | quote }}
+          {{- if .Values.platform.properties.smtp.from }}
+          - name: SMTP_FROM
+            value: {{ .Values.platform.properties.smtp.from | quote }}
+          {{- end }}
+          - name: USE_LOGIN_PASSWORD
+            value: {{ and .Values.platform.properties.smtp.login .Values.platform.properties.smtp.password }}
+          - name: USE_STARTTLS
+            value: {{ .Values.platform.properties.smtp.useStartTLS | default "false" | quote}}
+          - name: HELM_ADDRESS
+            value: "{{ .Values.platform.properties.helm.address }}"
+          - name: HELM_USERNAME
+            value: "{{ .Values.platform.properties.helm.username }}"
+          - name: HELM_USELOCALCHARTS
+            value: "{{ .Values.platform.properties.helm.useLocalCharts }}"
+          - name: HELM_REPOSITORY
+            value: "{{ .Values.platform.properties.helm.repositoryName }}"
+          - name: HELM_REPOSITORY_URL
+            value: "{{ .Values.platform.properties.helm.repositoryUrl }}"
+          - name: HELM_LOCALCHARTSDIR
+            value: "{{ .Values.platform.properties.helm.chartsDirectory }}"
+          - name: HELM_ENABLETLS
+            value: "{{ .Values.platform.properties.helm.enableTls }}"
+          - name: HELM_VERSION
+            value: "{{ .Values.platform.properties.helm.version }}"
+          {{- if not .Values.global.demoDeployment }}
+          - name: CAPTCHA_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.platform.properties.captchaSecret.secret.name }}
+                key: {{ .Values.platform.properties.captchaSecret.secret.key }}
+          {{- end }}
+          - name: METRICS_ENABLED
+            value: {{ .Values.platform.properties.nmaasMetricsEnabled | default "false" | quote }}
+          - name: GITLAB_ADDRESS
+            value: {{ .Values.platform.properties.gitlab.host }}
+          - name: GITLAB_PORT
+            value: {{ .Values.platform.properties.gitlab.port | quote }}
+          - name: GITLAB_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.janitor.properties.gitlabToken.secret.name }}
+                key: {{ .Values.janitor.properties.gitlabToken.secret.key }}
+          - name: K8S_INGRESS_CONTROLLER_INGRESS_CLASS
+            value: {{ .Values.platform.properties.k8s.ingress.controller.ingressClass }}
+          - name: K8S_INGRESS_CONTROLLER_PUBLIC_INGRESS_CLASS
+            value: {{ .Values.platform.properties.k8s.ingress.controller.publicIngressClass }}
+          - name: K8S_INGRESS_CONTROLLER_EXTERNAL_SERVICE_DOMAIN
+            value: {{ .Values.platform.properties.k8s.ingress.controller.externalServiceDomain }}
+          - name: K8S_INGRESS_CONTROLLER_PUBLIC_SERVICE_DOMAIN
+            value: {{ .Values.platform.properties.k8s.ingress.controller.publicServiceDomain }}
+          - name: K8S_INGRESS_CONTROLLER_TLS_SUPPORTED
+            value: {{ .Values.platform.properties.k8s.ingress.controller.tlsSupported | quote }}
+          - name: K8S_INGRESS_CONTROLLER_PER_DOMAIN
+            value: {{ .Values.platform.properties.k8s.ingress.controller.perDomain | quote }}
+          - name: K8S_INGRESS_CERTIFICATE_CONFIG_OPTION
+            value: {{ .Values.platform.properties.k8s.ingress.certificate.configOption }}
+          - name: K8S_INGRESS_CERTIFICATE_ISSUER_OR_WILDCARD_NAME
+            value: {{ .Values.platform.properties.k8s.ingress.certificate.issuerOrWildcardName }}
+          - name: K8S_DEPLOYMENT_NAMESPACE_CONFIG_OPTION
+            value: {{ .Values.platform.properties.k8s.deployment.namespaceConfigOption }}
+          - name: K8S_DEPLOYMENT_DEFAULT_NAMESPACE
+            value: {{ .Values.platform.properties.k8s.deployment.defaultNamespace }}
+          - name: K8S_DEPLOYMENT_DEFAULT_STORAGE_CLASS
+            value: {{ .Values.platform.properties.k8s.deployment.defaultStorageClass }}
+          - name: PORTAL_MAINTENANCE_FLAG
+            value: {{ .Values.platform.properties.maintenance | quote }}
+          - name: PORTAL_SSO_ALLOWED_FLAG
+            value: {{ .Values.platform.properties.sso.enabled | quote }}
+          - name: PORTAL_TEST_INSTANCE_FLAG
+            value: {{ .Values.platform.properties.testInstance | quote }}
+          - name: PORTAL_SEND_FAILURE_NOTIF_FLAG
+            value: {{ .Values.platform.properties.sendAppInstanceFailureEmails | quote }}
+          - name: PORTAL_DEFAULT_LANG
+            value: {{ .Values.platform.properties.defaultLanguage }}
+          - name: APP_UPGRADE_CRON
+            value: {{ .Values.platform.properties.serviceUpgradeCron | quote }}
+          - name: APP_UPGRADE_SUMMARY_CRON
+            value: {{ .Values.platform.properties.serviceUpgradeSummaryCron | quote }}
+          - name: APP_UPGRADE_SUMMARY_INTERVAL
+            value: {{ .Values.platform.properties.serviceUpgradeInterval | quote }}
+          - name: PLATFORM_API_DOCS_ENABLED
+            value: {{ .Values.platform.properties.apiDocsEnabled | quote }}
+      imagePullSecrets:
+      - name: {{ .Values.global.registrysecret }}
+{{- end -}}

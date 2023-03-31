@@ -1,0 +1,16 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: janitor-role
+rules:
+- apiGroups: [""]
+  resources: ["configmaps", "secrets", "namespaces"]
+  verbs: ["get", "update", "create", "patch", "delete", "list", "watch"]
+
+- apiGroups: ["extensions", "apps"]
+  resources: ["deployments", "daemonsets", "statefulsets"]
+  verbs: ["get"]
+
+- apiGroups: [""]
+  resources: ["services"]
+  verbs: ["get", "list", "watch"]

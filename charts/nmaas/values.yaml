@@ -1,0 +1,284 @@
+replicaCount: 1
+
+global:
+  # -- set to no if a wildcard certificate is available
+  acmeIssuer: true
+  # -- name of a cert-manager issuer
+  issuerName: nmaas-issuer
+  wildcardCertificateName: wildcard-tls
+  createIngressResources: true
+  # -- prefix for the created ingress objects
+  ingressName: nmaas-ingress
+  helmAccessKeyPublic: nmaas-helm-key-public
+  helmAccessKeyPrivate: nmaas-helm-key-private
+  nmaasDomain: nmaas.example.com
+  # -- currently not needed, for future use
+  registrysecret: nmaas-registry
+  demoDeployment: false
+  
+platform:
+  enabled: true
+  name: nmaas-platform
+  persistence:
+    enabled: true
+    # -- name of an existing claim to be used. If empty, a new one is provisioned.
+    existingClaim: ""
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    storageClass: ""
+  livenessProbe:
+    httpGet:
+      path: /actuator/health
+      port: 9001
+    periodSeconds: 30
+    timeoutSeconds: 10
+    failureThreshold: 10
+  readinessProbe:
+    httpGet:
+      path: /actuator/health
+      port: 9001
+    periodSeconds: 15
+    timeoutSeconds: 10
+    failureThreshold: 10
+  startupProbe:
+    httpGet:
+      path: /actuator/health
+      port: 9001
+    failureThreshold: 30
+    periodSeconds: 15
+    timeoutSeconds: 10
+  image:
+    repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-platform
+    tag: "1.5.1"
+    pullPolicy: IfNotPresent
+  port: 9001
+  targetPort: 9001
+  type: ClusterIP
+  tls: true
+  adminPassword:
+    # -- leave empty to use the existing secret specified below
+    literal: ""
+    secret:
+      # -- must be created manually if literal is empty
+      name: nmaas-platform-admin
+      key: password
+  apiSecret:
+    # -- leave empty to use existing secret specified below
+    literal: ""
+    secret:
+      # -- must be created manually if literal is empty
+      name: nmaas-api-secret
+      key: secret
+  initscripts:
+    enabled: true
+    image:
+      repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-platform-populate
+      tag: "1.5.0"
+      pullPolicy: Always
+  properties:
+    maintenance: false
+    testInstance: false
+    defaultLanguage: en
+    serviceDeploymentCheckInterval: 10
+    serviceDeploymentCheckTimeout: 600
+    sendAppInstanceFailureEmails: false
+    appInstanceFailureEmailList:
+    serviceUpgradeCron: "0 0 5 * * ?" # example "0 0 5 * * ?" - every day at 5:00 AM
+    serviceUpgradeSummaryCron: "0 0 6 * * ?" # example "0 0 6 * * ?" - every day at 6:00 AM
+    serviceUpgradeInterval: 24
+    apiDocsEnabled: false 
+    sso:
+      enabled: false
+      urlLogin: ""
+      urlLogout: ""
+      encryptionSecret:
+        # -- leave empty to use existing secret specified below
+        literal: ""
+        secret:
+          # -- must be created manually if literal is empty
+          name: nmaas-sp-secret
+          key: secret
+      timeout: 15
+    adminEmail: admin@example.com
+    postgresql: # only required if an external postgresql instance is used (when postgresql.install is false)
+      hostname: nmaas-postgresql
+      database: nmaas
+      username: nmaas
+      password:
+        # -- leave empty to use existing secret specified below
+        literal: ""
+        secret:
+          name: nmaas-postgresql-secret
+          key: secret
+
+    helm:
+      address: nmaas-helm
+      username: helm
+      useLocalCharts: false
+      repositoryName: nmaas
+      repositoryUrl: https://artifactory.software.geant.org/artifactory/nmaas-helm
+      chartsDirectory: /home/nmaas/charts
+      enableTls: true
+      version: v3
+    smtp:
+      host: nmaas-postfix
+      # -- override default SMTP from value
+      from: ""
+    gitlab:
+      # -- replace with service name from GitLab, e.g <MY_GITLAB_RELEASE>-webservice-default
+      host: nmaas-gitlab-webservice-default
+      port: 8080
+    k8s:
+      ingress:
+        controller:
+          # -- ingress class supported by the default ingress controller
+          ingressClass: nginx
+          # -- ingress class to be used for services exposed publicly (e.g. without dedicated VPN)
+          publicIngressClass: public
+          # -- base FQDN for deployed user applications (e.g. nmaas.example.com)
+          externalServiceDomain: nmaas.example.com
+          # -- base FQDN for deployed user applications exposed publicly (e.g. public.nmaas.example.com)
+          publicServiceDomain: public.nmaas.example.com
+          # -- flag indicating if ingress controller(s) support TLS
+          tlsSupported: true
+          # -- flag indicating if a dedicated ingress controller is deploy in every customer namespace
+          perDomain: false
+        certificate: # TLS certificate related option are mandatory if tlsSupported flag is set to true
+          # -- two options possible: USE_WILDCARD or USE_LETSENCRYPT
+          configOption: USE_WILDCARD
+          # -- depending on the selected option, either certificate issuer name or name of secret object holding the certificate
+          issuerOrWildcardName: nmaas-wildcard-secret
+      deployment:
+        # -- two options possible: USE_DOMAIN_NAMESPACE or USE_DEFAULT_NAMESPACE
+        namespaceConfigOption: USE_DOMAIN_NAMESPACE
+        # -- parameter used only if USE_DEFAULT_NAMESPACE option is set
+        defaultNamespace: default
+        # -- should be left blank if default storage class was defined defined at cluster should be used
+        defaultStorageClass:
+    captchaSecret:
+      # -- leave empty to use existing secret specified below 
+      literal: ""
+      secret:
+        name: nmaas-captcha-secret-secret
+        key: secret
+    # -- expose Prometheus metrics
+    nmaasMetricsEnabled: true
+
+portal:
+  enabled: true
+  name: nmaas-portal
+  image:
+    repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-portal
+    tag: "1.5.1"
+    pullPolicy: IfNotPresent
+  port: 9009
+  targetPort: 9009
+  type: ClusterIP
+  tls: true
+  properties:
+    tokenName: token
+    captchaKey:
+      # -- empty to use existing secret specified below
+      literal: ""
+      secret:
+        name: nmaas-captcha-key-secret
+        key: secret
+
+postfix:
+  enabled: true
+  name: nmaas-postfix
+  image:
+    repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-postfix
+    # repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-postfix-smtp # if an external smtp server will be used
+    tag: "1.2.0"
+    # tag: "1.0.0" # if an external smtp server will be used
+    pullPolicy: Always
+  port: 587
+  type: ClusterIP
+  properties:
+    hostname: "mailer.example.com"
+    smtp: # only required if smtp image is used
+      port: 587
+      fromAddress: 'noreply@example.com'
+      secretName: nmaas-smtp-secret
+      host:
+        # -- leave empty to use existing secret
+        literal: ""
+        secret:
+          key: smtpHost
+      username:
+        # -- leave empty to use existing secret
+        literal: ""
+        secret: 
+          key: smtpUsername
+      password:
+        # -- leave empty to use existing secret
+        literal: ""
+        secret:
+          key: smtpPassword
+
+sp:
+  enabled: false
+  name: nmaas-sp
+  image:
+    repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-sp
+    tag: "1.2.0"
+    pullPolicy: Always
+  port: 443
+  targetPort: 80
+  type: ClusterIP
+  tls: true
+  properties:
+    idp:
+      name: edugain
+      uri: https://login.terena.org/wayf/saml2/idp/metadata.php
+      userId: uid
+
+helm:
+  enabled: true
+  name: nmaas-helm
+  serviceAccountName: nmaas-helm
+  image:
+    repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-helm-3
+    tag: "3.9.3"
+    pullPolicy: Always
+  port: 22
+  targetPort: 22
+  type: ClusterIP
+  properties:
+    users: helm:1000:1000
+  persistence:
+    enabled: true
+    # -- name of an existing claim to be used. If empty, a new one is provisioned.
+    existingClaim: ""
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    storageClass: ""
+
+janitor:
+  enabled: true
+  name: nmaas-janitor
+  image:
+    repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-janitor
+    tag: "1.5.1"
+    pullPolicy: IfNotPresent
+  port: 5000
+  targetPort: 5000
+  serviceAccountName: nmaas-janitor
+  type: ClusterIP
+  properties:
+    gitlabToken:
+      literal: ""
+      secret:
+        name: nmaas-gitlab-janitor-token
+        key: secret
+    gitlabApiUrl: http://nmaas-gitlab-webservice-default:8181/api/v4
+
+postgresql: # settings for in-cluster postgresql
+  install: true
+  postgresqlUsername: nmaas
+  postgresqlPassword: nmaas
+  postgresqlDatabase: nmaas
+  persistence:
+    enabled: true
+    size: 8Gi

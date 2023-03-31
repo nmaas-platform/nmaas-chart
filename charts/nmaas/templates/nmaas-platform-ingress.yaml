@@ -1,0 +1,53 @@
+{{- if .Values.platform.enabled -}}
+{{- if .Values.global.createIngressResources -}}
+{{- $kubeVersion := .Capabilities.KubeVersion.GitVersion -}}
+{{- if semverCompare ">=1.19-0" $kubeVersion -}}
+apiVersion: networking.k8s.io/v1
+{{- else -}}
+apiVersion: networking.k8s.io/v1beta1
+{{- end }}
+kind: Ingress
+metadata:
+  name: {{ index .Values.global.ingressName }}-platform
+  annotations:
+    {{- if not (semverCompare ">=1.19-0" $kubeVersion) }}
+    kubernetes.io/ingress.class: {{ .Values.platform.properties.k8s.ingress.controller.ingressClass }}
+    {{- end }}
+    nginx.org/mergeable-ingress-type: minion
+    {{ if and .Values.platform.tls .Values.global.acmeIssuer }}
+    kubernetes.io/tls-acme: "true"
+    certmanager.k8s.io/cluster-issuer: {{ .Values.global.issuerName }}
+    {{ end }}
+spec:
+  {{- if $.Values.platform.tls }}
+  tls:
+  - hosts: 
+    - {{ .Values.platform.host | default .Values.global.nmaasDomain | quote }}
+    {{- if .Values.global.acmeIssuer }}
+    secretName: {{ .Values.platform.certName | default "nmaas-platform-tls" | quote }}
+    {{- else }}
+    secretName: {{ .Values.platform.certName | default .Values.global.wildcardCertificateName | quote }}
+    {{- end }}
+  {{- end }}
+  {{- if semverCompare ">=1.19-0" $kubeVersion }}
+  ingressClassName: {{ .Values.platform.properties.k8s.ingress.controller.ingressClass }}
+  {{- end }}
+  rules:
+  - host: {{ .Values.platform.host | default .Values.global.nmaasDomain | quote }}
+    http:
+      paths:
+      - path: /api/
+        {{- if semverCompare ">=1.19-0" $kubeVersion }}
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ .Values.platform.name }}
+            port:
+              number: {{ .Values.platform.targetPort }}
+        {{- else }}      
+        backend:
+          serviceName: {{ .Values.platform.name }}
+          servicePort: {{ .Values.platform.targetPort }}
+        {{- end }}
+{{- end -}}
+{{- end -}}

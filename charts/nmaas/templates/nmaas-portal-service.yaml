@@ -1,0 +1,19 @@
+{{- if .Values.portal.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.portal.name }}
+  labels:
+    app: {{ .Values.portal.name }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+spec:
+  type: {{ .Values.portal.type }}
+  ports:
+  - port: {{ .Values.portal.port }}
+    targetPort: {{ .Values.portal.targetPort }}
+    protocol: TCP
+  selector:
+    app: {{ .Values.portal.name }}
+{{- end -}}
