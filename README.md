@@ -2,7 +2,7 @@
 
 ![Version: 1.2.5](https://img.shields.io/badge/Version-1.2.5-informational?style=flat-square) ![AppVersion: 1.5.1](https://img.shields.io/badge/AppVersion-1.5.1-informational?style=flat-square)
 
-Geant Network Management as a Service Helm chart for Kubernetes
+GÉANT Network Management as a Service Helm chart for Kubernetes
 
 ## Maintainers
 
