@@ -1,6 +1,6 @@
 apiVersion: v2
 name: nmaas
-description: Geant Network Management as a Service Helm chart for Kubernetes
+description: GÉANT Network Management as a Service Helm chart for Kubernetes
 version: 1.2.5
 appVersion: 1.5.1
 keywords:

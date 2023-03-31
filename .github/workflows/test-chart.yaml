@@ -1,4 +1,4 @@
-name: Build NMaaS Helm Chart
+name: Test NMaaS Helm Chart
 on:
   push:
     branches:
