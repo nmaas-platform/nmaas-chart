@@ -1,0 +1,59 @@
+name: Build NMaaS Helm Chart
+on:
+  push:
+    branches:
+      - '**'
+jobs:
+  test_chart:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: "0"
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: v3.9.2
+
+      - name: Set up chart-testing
+        uses: helm/chart-testing-action@v2.3.1
+
+      - name: Lint Helm chart
+        run: ct lint --debug --target-branch master
+
+      - name: Check for chart changes
+        id: list-changed
+        run: |
+          changed=$(ct list-changed --target-branch master)
+          if [[ -n "$changed" ]]; then
+            echo ::set-output name=changed::true
+          fi
+
+      - name: Install helm-docs
+        run: |
+          if [ not $(which helmd-docs) ]
+          then
+            mkdir -p ~/.local/bin
+            wget -O /tmp/helm-docs.tar.gz https://github.com/norwoodj/helm-docs/releases/download/v1.11.0/helm-docs_1.11.0_Linux_x86_64.tar.gz
+            tar -xvzf /tmp/helm-docs.tar.gz -C ~/.local/bin
+            rm ~/.local/bin/README.md ~/.local/bin/LICENSE
+            echo "${HOME}/.local/bin" >> $GITHUB_PATH
+          fi
+        shell: bash
+        if: steps.list-changed.outputs.changed == 'true'
+
+      - name: Generate helm-docs
+        run: helm-docs --output-file ../../README.md
+        if: steps.list-changed.outputs.changed == 'true'
+
+      - name: Commit changes made to readme files
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: update chart readme.md files automatically
+        if: steps.list-changed.outputs.changed == 'true'
