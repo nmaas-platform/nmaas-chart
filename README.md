@@ -1,6 +1,6 @@
 # nmaas
 
-![Version: 1.2.5](https://img.shields.io/badge/Version-1.2.5-informational?style=flat-square) ![AppVersion: 1.5.1](https://img.shields.io/badge/AppVersion-1.5.1-informational?style=flat-square)
+![Version: 1.2.5](https://img.shields.io/badge/Version-1.2.5-informational?style=flat-square) ![AppVersion: 1.5.2](https://img.shields.io/badge/AppVersion-1.5.2-informational?style=flat-square)
 
 GÉANT Network Management as a Service Helm chart for Kubernetes
 
@@ -67,11 +67,11 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | platform.enabled | bool | `true` |  |
 | platform.image.pullPolicy | string | `"IfNotPresent"` |  |
 | platform.image.repository | string | `"artifactory.software.geant.org/nmaas-docker-local/nmaas-platform"` |  |
-| platform.image.tag | string | `"1.5.1"` |  |
+| platform.image.tag | string | `"1.5.2"` |  |
 | platform.initscripts.enabled | bool | `true` |  |
 | platform.initscripts.image.pullPolicy | string | `"Always"` |  |
 | platform.initscripts.image.repository | string | `"artifactory.software.geant.org/nmaas-docker-local/nmaas-platform-populate"` |  |
-| platform.initscripts.image.tag | string | `"1.5.0"` |  |
+| platform.initscripts.image.tag | string | `"v1.5.2"` |  |
 | platform.livenessProbe.failureThreshold | int | `10` |  |
 | platform.livenessProbe.httpGet.path | string | `"/actuator/health"` |  |
 | platform.livenessProbe.httpGet.port | int | `9001` |  |
@@ -150,7 +150,7 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | portal.enabled | bool | `true` |  |
 | portal.image.pullPolicy | string | `"IfNotPresent"` |  |
 | portal.image.repository | string | `"artifactory.software.geant.org/nmaas-docker-local/nmaas-portal"` |  |
-| portal.image.tag | string | `"1.5.1"` |  |
+| portal.image.tag | string | `"1.5.2"` |  |
 | portal.name | string | `"nmaas-portal"` |  |
 | portal.port | int | `9009` |  |
 | portal.properties.captchaKey.literal | string | `""` | empty to use existing secret specified below |
