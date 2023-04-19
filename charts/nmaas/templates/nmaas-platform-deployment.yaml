@@ -213,6 +213,8 @@ spec:
             value: {{ .Values.platform.properties.serviceUpgradeInterval | quote }}
           - name: PLATFORM_API_DOCS_ENABLED
             value: {{ .Values.platform.properties.apiDocsEnabled | quote }}
+          - name: PORTAL_DOMAIN_REGISTRATION_SELECTOR
+            value: {{ .Values.platform.properties.showDomainRegistrationSelector | quote }}
       imagePullSecrets:
       - name: {{ .Values.global.registrysecret }}
 {{- end -}}
