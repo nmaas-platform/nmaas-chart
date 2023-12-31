@@ -155,6 +155,10 @@ spec:
             value: "{{ .Values.platform.properties.helm.enableTls }}"
           - name: HELM_VERSION
             value: "{{ .Values.platform.properties.helm.version }}"
+          - name: HELM_UPDATE_ASYNC_ENABLED 
+            value: "{{ .Values.platform.properties.helm.asyncUpdateEnabled | quote }}"
+          - name: HELM_UPDATE_ASYNC_CRON
+            value: "{{ .Values.platform.properties.helm.asyncUpdateCron }}"
           {{- if not .Values.global.demoDeployment }}
           - name: CAPTCHA_SECRET
             valueFrom:
