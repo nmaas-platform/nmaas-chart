@@ -156,7 +156,7 @@ spec:
           - name: HELM_VERSION
             value: "{{ .Values.platform.properties.helm.version }}"
           - name: HELM_UPDATE_ASYNC_ENABLED 
-            value: "{{ .Values.platform.properties.helm.asyncUpdateEnabled | quote }}"
+            value: "{{ .Values.platform.properties.helm.asyncUpdateEnabled }}"
           - name: HELM_UPDATE_ASYNC_CRON
             value: "{{ .Values.platform.properties.helm.asyncUpdateCron }}"
           {{- if not .Values.global.demoDeployment }}
