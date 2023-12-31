@@ -1,6 +1,6 @@
 # nmaas
 
-![Version: 1.2.5](https://img.shields.io/badge/Version-1.2.5-informational?style=flat-square) ![AppVersion: 1.5.2](https://img.shields.io/badge/AppVersion-1.5.2-informational?style=flat-square)
+![Version: 1.2.6](https://img.shields.io/badge/Version-1.2.6-informational?style=flat-square) ![AppVersion: 1.5.4](https://img.shields.io/badge/AppVersion-1.5.4-informational?style=flat-square)
 
 GÉANT Network Management as a Service Helm chart for Kubernetes
 
@@ -8,7 +8,7 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| nmaas-platform | <nmaas-dev@lists.geant.org> | <https://wiki.geant.org/display/NMAAS/NMaaS+Home> |
+| nmaas-platform | <nmaas-dev@lists.geant.org> | <https://docs.nmaas.eu> |
 
 ## Requirements
 
@@ -48,7 +48,7 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | janitor.enabled | bool | `true` |  |
 | janitor.image.pullPolicy | string | `"IfNotPresent"` |  |
 | janitor.image.repository | string | `"artifactory.software.geant.org/nmaas-docker-local/nmaas-janitor"` |  |
-| janitor.image.tag | string | `"1.5.1"` |  |
+| janitor.image.tag | string | `"1.5.3"` |  |
 | janitor.name | string | `"nmaas-janitor"` |  |
 | janitor.port | int | `5000` |  |
 | janitor.properties.gitlabApiUrl | string | `"http://nmaas-gitlab-webservice-default:8181/api/v4"` |  |
@@ -67,11 +67,11 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | platform.enabled | bool | `true` |  |
 | platform.image.pullPolicy | string | `"IfNotPresent"` |  |
 | platform.image.repository | string | `"artifactory.software.geant.org/nmaas-docker-local/nmaas-platform"` |  |
-| platform.image.tag | string | `"1.5.2"` |  |
+| platform.image.tag | string | `"1.5.4"` |  |
 | platform.initscripts.enabled | bool | `true` |  |
 | platform.initscripts.image.pullPolicy | string | `"Always"` |  |
 | platform.initscripts.image.repository | string | `"artifactory.software.geant.org/nmaas-docker-local/nmaas-platform-populate"` |  |
-| platform.initscripts.image.tag | string | `"v1.5.2"` |  |
+| platform.initscripts.image.tag | string | `"v1.5.4"` |  |
 | platform.livenessProbe.failureThreshold | int | `10` |  |
 | platform.livenessProbe.httpGet.path | string | `"/actuator/health"` |  |
 | platform.livenessProbe.httpGet.port | int | `9001` |  |
@@ -94,6 +94,8 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | platform.properties.gitlab.host | string | `"nmaas-gitlab-webservice-default"` | replace with service name from GitLab, e.g <MY_GITLAB_RELEASE>-webservice-default |
 | platform.properties.gitlab.port | int | `8080` |  |
 | platform.properties.helm.address | string | `"nmaas-helm"` |  |
+| platform.properties.helm.asyncUpdateCron | string | `"0 0 * * * ?"` |  |
+| platform.properties.helm.asyncUpdateEnabled | bool | `true` |  |
 | platform.properties.helm.chartsDirectory | string | `"/home/nmaas/charts"` |  |
 | platform.properties.helm.enableTls | bool | `true` |  |
 | platform.properties.helm.repositoryName | string | `"nmaas"` |  |
@@ -150,7 +152,7 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | portal.enabled | bool | `true` |  |
 | portal.image.pullPolicy | string | `"IfNotPresent"` |  |
 | portal.image.repository | string | `"artifactory.software.geant.org/nmaas-docker-local/nmaas-portal"` |  |
-| portal.image.tag | string | `"1.5.2"` |  |
+| portal.image.tag | string | `"1.5.3"` |  |
 | portal.name | string | `"nmaas-portal"` |  |
 | portal.port | int | `9009` |  |
 | portal.properties.captchaKey.literal | string | `""` | empty to use existing secret specified below |
