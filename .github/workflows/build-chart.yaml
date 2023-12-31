@@ -5,6 +5,7 @@ on:
       - '**'
 jobs:
   test_chart:
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
