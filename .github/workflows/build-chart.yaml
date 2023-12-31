@@ -5,7 +5,6 @@ on:
       - '**'
 jobs:
   test_chart:
-    runs-on: self-hosted
     steps:
       - name: Checkout
         uses: actions/checkout@v3
