@@ -1,16 +1,16 @@
 apiVersion: v2
 name: nmaas
 description: GÉANT Network Management as a Service Helm chart for Kubernetes
-version: 1.2.6-beta.1
+version: 1.2.6
 appVersion: 1.5.4
 keywords:
-- network management
-- cloud deployment
-- automated configuration
+- Network Management
+- Cloud Deployment
+- Automated Configuration
 maintainers:
 - email: nmaas-dev@lists.geant.org
   name: nmaas-platform
-  url: https://wiki.geant.org/display/NMAAS/NMaaS+Home
+  url: https://docs.nmaas.eu
 dependencies:
 - name: postgresql
   version: 10.16.2
