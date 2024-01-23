@@ -19,6 +19,9 @@ global:
 platform:
   enabled: true
   name: nmaas-platform
+  ingress:
+    # -- defaults to .Values.platform.properties.k8s.ingress.controller.ingressClass if not set
+    className: ''
   persistence:
     enabled: true
     # -- name of an existing claim to be used. If empty, a new one is provisioned.
@@ -178,6 +181,9 @@ portal:
     repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-portal
     tag: "1.5.3"
     pullPolicy: IfNotPresent
+  ingress:
+    # -- defaults to .Values.platform.properties.k8s.ingress.controller.ingressClass if not set
+    className: ''
   port: 9009
   targetPort: 9009
   type: ClusterIP
@@ -232,6 +238,9 @@ sp:
     repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-sp
     tag: "1.2.0"
     pullPolicy: Always
+  ingress:
+    # -- defaults to .Values.platform.properties.k8s.ingress.controller.ingressClass if not set
+    className: ''
   port: 443
   targetPort: 80
   type: ClusterIP
