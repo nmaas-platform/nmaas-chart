@@ -1,6 +1,6 @@
 # nmaas
 
-![Version: 1.2.6](https://img.shields.io/badge/Version-1.2.6-informational?style=flat-square) ![AppVersion: 1.5.4](https://img.shields.io/badge/AppVersion-1.5.4-informational?style=flat-square)
+![Version: 1.2.8](https://img.shields.io/badge/Version-1.2.8-informational?style=flat-square) ![AppVersion: 1.5.4](https://img.shields.io/badge/AppVersion-1.5.4-informational?style=flat-square)
 
 GÉANT Network Management as a Service Helm chart for Kubernetes
 
@@ -8,7 +8,7 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| nmaas-platform | <nmaas-dev@lists.geant.org> | <https://docs.nmaas.eu> |
+| nmaas-platform | <nmaas-admin@lists.geant.org> | <https://docs.nmaas.eu> |
 
 ## Requirements
 
@@ -68,6 +68,7 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | platform.image.pullPolicy | string | `"IfNotPresent"` |  |
 | platform.image.repository | string | `"artifactory.software.geant.org/nmaas-docker-local/nmaas-platform"` |  |
 | platform.image.tag | string | `"1.5.4"` |  |
+| platform.ingress.className | string | `""` | defaults to .Values.platform.properties.k8s.ingress.controller.ingressClass if not set |
 | platform.initscripts.enabled | bool | `true` |  |
 | platform.initscripts.image.pullPolicy | string | `"Always"` |  |
 | platform.initscripts.image.repository | string | `"artifactory.software.geant.org/nmaas-docker-local/nmaas-platform-populate"` |  |
@@ -87,6 +88,7 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | platform.properties.adminEmail | string | `"admin@example.com"` |  |
 | platform.properties.apiDocsEnabled | bool | `false` |  |
 | platform.properties.appInstanceFailureEmailList | string | `nil` |  |
+| platform.properties.autoNamespaceCreationForDomains | bool | `false` | if true nmaas will automatically create the corresponding Kubernetes namespace for each new domain |
 | platform.properties.captchaSecret.literal | string | `""` | leave empty to use existing secret specified below |
 | platform.properties.captchaSecret.secret.key | string | `"secret"` |  |
 | platform.properties.captchaSecret.secret.name | string | `"nmaas-captcha-secret-secret"` |  |
@@ -153,6 +155,7 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | portal.image.pullPolicy | string | `"IfNotPresent"` |  |
 | portal.image.repository | string | `"artifactory.software.geant.org/nmaas-docker-local/nmaas-portal"` |  |
 | portal.image.tag | string | `"1.5.3"` |  |
+| portal.ingress.className | string | `""` | defaults to .Values.platform.properties.k8s.ingress.controller.ingressClass if not set |
 | portal.name | string | `"nmaas-portal"` |  |
 | portal.port | int | `9009` |  |
 | portal.properties.captchaKey.literal | string | `""` | empty to use existing secret specified below |
@@ -180,6 +183,7 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | sp.image.pullPolicy | string | `"Always"` |  |
 | sp.image.repository | string | `"artifactory.software.geant.org/nmaas-docker-local/nmaas-sp"` |  |
 | sp.image.tag | string | `"1.2.0"` |  |
+| sp.ingress.className | string | `""` | defaults to .Values.platform.properties.k8s.ingress.controller.ingressClass if not set |
 | sp.name | string | `"nmaas-sp"` |  |
 | sp.port | int | `443` |  |
 | sp.properties.idp.name | string | `"edugain"` |  |
