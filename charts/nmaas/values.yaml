@@ -93,6 +93,8 @@ platform:
     serviceUpgradeInterval: 24
     apiDocsEnabled: false
     showDomainRegistrationSelector: true
+    # -- if true nmaas will automatically create the corresponding Kubernetes namespace for each new domain
+    autoNamespaceCreationForDomains: false
     sso:
       enabled: false
       urlLogin: ""

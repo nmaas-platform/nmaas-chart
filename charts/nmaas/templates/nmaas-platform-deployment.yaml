@@ -219,6 +219,8 @@ spec:
             value: {{ .Values.platform.properties.apiDocsEnabled | quote }}
           - name: PORTAL_DOMAIN_REGISTRATION_SELECTOR
             value: {{ .Values.platform.properties.showDomainRegistrationSelector | quote }}
+          - name: NAMESPACE_CREATION_ENABLED
+            value: {{ .Values.platform.properties.autoNamespaceCreationForDomains | quote }}
       imagePullSecrets:
       - name: {{ .Values.global.registrysecret }}
 {{- end -}}
