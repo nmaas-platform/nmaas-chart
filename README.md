@@ -1,6 +1,6 @@
 # nmaas
 
-![Version: 1.2.8](https://img.shields.io/badge/Version-1.2.8-informational?style=flat-square) ![AppVersion: 1.5.4](https://img.shields.io/badge/AppVersion-1.5.4-informational?style=flat-square)
+![Version: 1.2.9](https://img.shields.io/badge/Version-1.2.9-informational?style=flat-square) ![AppVersion: 1.6.0](https://img.shields.io/badge/AppVersion-1.6.0-informational?style=flat-square)
 
 GÉANT Network Management as a Service Helm chart for Kubernetes
 
@@ -48,7 +48,7 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | janitor.enabled | bool | `true` |  |
 | janitor.image.pullPolicy | string | `"IfNotPresent"` |  |
 | janitor.image.repository | string | `"artifactory.software.geant.org/nmaas-docker-local/nmaas-janitor"` |  |
-| janitor.image.tag | string | `"1.5.3"` |  |
+| janitor.image.tag | string | `"1.6.0"` |  |
 | janitor.name | string | `"nmaas-janitor"` |  |
 | janitor.port | int | `5000` |  |
 | janitor.properties.gitlabApiUrl | string | `"http://nmaas-gitlab-webservice-default:8181/api/v4"` |  |
@@ -67,7 +67,7 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | platform.enabled | bool | `true` |  |
 | platform.image.pullPolicy | string | `"IfNotPresent"` |  |
 | platform.image.repository | string | `"artifactory.software.geant.org/nmaas-docker-local/nmaas-platform"` |  |
-| platform.image.tag | string | `"1.5.4"` |  |
+| platform.image.tag | string | `"1.6.0"` |  |
 | platform.ingress.className | string | `""` | defaults to .Values.platform.properties.k8s.ingress.controller.ingressClass if not set |
 | platform.initscripts.enabled | bool | `true` |  |
 | platform.initscripts.image.pullPolicy | string | `"Always"` |  |
@@ -154,7 +154,7 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | portal.enabled | bool | `true` |  |
 | portal.image.pullPolicy | string | `"IfNotPresent"` |  |
 | portal.image.repository | string | `"artifactory.software.geant.org/nmaas-docker-local/nmaas-portal"` |  |
-| portal.image.tag | string | `"1.5.3"` |  |
+| portal.image.tag | string | `"1.6.0"` |  |
 | portal.ingress.className | string | `""` | defaults to .Values.platform.properties.k8s.ingress.controller.ingressClass if not set |
 | portal.name | string | `"nmaas-portal"` |  |
 | portal.port | int | `9009` |  |
