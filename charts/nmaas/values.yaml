@@ -113,6 +113,7 @@ platform:
       hostname: nmaas-postgresql
       database: nmaas
       username: nmaas
+      port: 5432
       password:
         # -- leave empty to use existing secret specified below
         literal: ""

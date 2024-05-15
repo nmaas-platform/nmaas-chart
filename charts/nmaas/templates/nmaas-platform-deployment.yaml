@@ -65,6 +65,8 @@ spec:
             value: {{ .Values.postgresql.postgresqlUsername }}
           - name: POSTGRESQL_PASSWORD
             value: {{ .Values.postgresql.postgresqlPassword }}
+          - name: POSTGRESQL_PORT
+            value: "5432"
           {{- else }}
           - name: POSTGRESQL_HOST
             value: {{ .Values.platform.properties.postgresql.hostname }}
@@ -77,6 +79,8 @@ spec:
               secretKeyRef:
                 name: {{ .Values.platform.properties.postgresql.password.secret.name }}
                 key: {{ .Values.platform.properties.postgresql.password.secret.key }}
+          - name: POSTGRESQL_PORT
+            value: {{ .Values.platform.properties.postgresql.port | quote }}
           {{- end }}
           - name: SSO_URL_LOGIN
             value: {{ .Values.platform.properties.sso.urlLogin | default (printf "https://%s/sso" .Values.global.nmaasDomain) | quote }}
