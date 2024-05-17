@@ -136,6 +136,8 @@ platform:
       host: nmaas-postfix
       # -- override default SMTP from value
       from: ""
+      # -- exposed as SMTP_FROM_DEFAULT_DOMAIN in global deployment parameters
+      defaultDomain: 'example.com'
     gitlab:
       # -- replace with service name from GitLab, e.g <MY_GITLAB_RELEASE>-webservice-default
       host: nmaas-gitlab-webservice-default

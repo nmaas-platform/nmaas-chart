@@ -139,6 +139,8 @@ spec:
           - name: SMTP_FROM
             value: {{ .Values.platform.properties.smtp.from | quote }}
           {{- end }}
+          - name: SMTP_FROM_DEFAULT_DOMAIN
+            value: {{ .Values.platform.properties.smtp.defaultDomain | quote }}
           - name: USE_LOGIN_PASSWORD
             value: {{ and .Values.platform.properties.smtp.login .Values.platform.properties.smtp.password }}
           - name: USE_STARTTLS
