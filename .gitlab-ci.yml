@@ -1,0 +1,135 @@
+stages:
+  - version
+  - test
+  - document
+  - publish
+
+variables:
+  CHART_NAME: 'nmaas'
+
+version-bump-dev:
+  stage: version
+  image: korvoj/helm-lint-yq:6.0.0
+  before_script:
+    - git config user.email 'renovate@nmaas.eu'
+    - git config user.name 'NMaaS Renovate'
+    - git config pull.rebase true
+  script:
+    - git fetch
+    - git checkout master
+    - export MASTER_CHART_VERSION=$(yq e '.version' charts/$CHART_NAME/Chart.yaml)
+    - git checkout $CI_COMMIT_REF_NAME
+    - git pull
+    - export CURRENT_CHART_VERSION=$(yq e '.version' charts/$CHART_NAME/Chart.yaml)
+    - export CURRENT_DOCKER_IMAGE_VERSION=$(yq e '.platform.image.tag' charts/$CHART_NAME/values.yaml)
+    - export CURRENT_CHART_APP_VERSION=$(yq e '.appVersion' charts/$CHART_NAME/Chart.yaml)
+    - echo "Current version $CURRENT_CHART_VERSION. Master version $MASTER_CHART_VERSION"
+    - echo "Current chart appVersion $CURRENT_CHART_APP_VERSION. Current Docker image version $CURRENT_DOCKER_IMAGE_VERSION"
+    - export SEMVER_COMPARISON=$(semver compare $MASTER_CHART_VERSION $CURRENT_CHART_VERSION)
+    - >
+      if [[ $SEMVER_COMPARISON -eq 0 ]]; then
+        echo "Versions are equal. Will do a patch version bump..."
+        export CURRENT_CHART_VERSION=$(semver bump patch $CURRENT_CHART_VERSION)
+        export CURRENT_CHART_VERSION=$(semver bump prerelease $CURRENT_CHART_VERSION)
+      fi
+    - echo "Will bump to $CURRENT_CHART_VERSION"
+    - yq -e '.version=strenv(CURRENT_CHART_VERSION)' -i charts/$CHART_NAME/Chart.yaml
+    - git status
+    - >
+      if [ "$CURRENT_CHART_APP_VERSION" != "$CURRENT_DOCKER_IMAGE_VERSION" ]; then
+        echo "Chart appVersion and Docker tag are not equal. Will reconcile..."
+        yq -e '.appVersion=strenv(CURRENT_DOCKER_IMAGE_VERSION)' -i charts/$CHART_NAME/Chart.yaml
+      fi
+    - >
+      if [[ $(git status --porcelain) ]]; then
+        echo "Changes detected. Committing changes..."
+        git add .
+        git commit -m "[ci skip] Reconcile changes"
+        git push https://root:$RENOVATE_ACCESS_TOKEN@$CI_SERVER_HOST/$CI_PROJECT_PATH.git HEAD:$CI_COMMIT_REF_NAME
+      fi
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' # Run for all changes to a merge request's source branch
+
+version-bump-release:
+  stage: version
+  image: korvoj/helm-lint-yq:6.0.0
+  before_script:
+    - git config user.email 'renovate@nmaas.eu'
+    - git config user.name 'NMaaS Renovate'
+    - git config pull.rebase true
+  script:
+    - export CURRENT_CHART_VERSION=$(yq e '.version' charts/$CHART_NAME/Chart.yaml)
+    - export NEW_CHART_VERSION=$(semver bump release $CURRENT_CHART_VERSION)
+    - yq -e '.version=strenv(NEW_CHART_VERSION)' -i charts/$CHART_NAME/Chart.yaml
+    - >
+      if [[ $(git status --porcelain) ]]; then
+        echo "Changes detected. Committing changes..."
+        git add .
+        git commit -m "[ci skip] Update version numbers in Chart.yaml"
+        git push https://root:$RENOVATE_ACCESS_TOKEN@$CI_SERVER_HOST/$CI_PROJECT_PATH.git HEAD:$CI_COMMIT_REF_NAME
+      fi
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH # Run for all changes to the default branch
+
+helm-lint:
+  stage: test
+  image: korvoj/helm-lint-yq:6.0.0
+  script:
+    - git checkout $CI_COMMIT_REF_NAME
+    - git pull
+    - ct lint --all --debug --target-branch master
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' # Run for all changes to a merge request's source branch
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH # Run for all changes to the default branch
+
+helm-docs:
+  stage: document
+  image: korvoj/helm-docs:v1.13.1@sha256:50e222e6727c6d460865f2770140b5cc867a453302b9dd5d3bc9d98f133597ee
+  before_script: 
+    - git pull https://root:$RENOVATE_ACCESS_TOKEN@$CI_SERVER_HOST/$CI_PROJECT_PATH.git $CI_COMMIT_REF_NAME
+    - git config user.email 'renovate@nmaas.eu'
+    - git config user.name 'NMaaS Renovate'
+    - git config pull.rebase true
+  script:
+    - helm-docs --output-file '../../README.md'
+    - git status
+    - status_output=$(git status --porcelain)
+    - >
+      if [ -n "$status_output" ]; then
+        echo "Changes detected. Committing changes..."
+        git add .
+        git commit -m "[ci skip] Update README.md"
+        git pull https://root:$RENOVATE_ACCESS_TOKEN@$CI_SERVER_HOST/$CI_PROJECT_PATH.git $CI_COMMIT_REF_NAME
+        git push https://root:$RENOVATE_ACCESS_TOKEN@$CI_SERVER_HOST/$CI_PROJECT_PATH.git HEAD:$CI_COMMIT_REF_NAME
+      fi
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' # Run for all changes to a merge request's source branch
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH # Run for all changes to the default branch
+
+publish-chart-dev:
+  stage: publish
+  image: korvoj/helm-lint-yq:6.0.0
+  before_script: 
+    - git pull https://root:$RENOVATE_ACCESS_TOKEN@$CI_SERVER_HOST/$CI_PROJECT_PATH.git $CI_COMMIT_REF_NAME
+  script:
+    - export CHART_VERSION=$(yq e '.version' charts/$CHART_NAME/Chart.yaml)
+    - export CHART_ARCHIVE=${CHART_NAME}-${CHART_VERSION}.tgz
+    - helm dependency update charts/$CHART_NAME
+    - helm package charts/$CHART_NAME
+    - curl -u $HELM_USER:$HELM_PASSWORD -T $CHART_ARCHIVE $HELM_DEV_CHART_REPOSITORY/$CHART_ARCHIVE
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' # Run for all changes to a merge request's source branch
+
+publish-chart-prod:
+  stage: publish
+  image: korvoj/helm-lint-yq:6.0.0
+  before_script:
+    - git pull https://root:$RENOVATE_ACCESS_TOKEN@$CI_SERVER_HOST/$CI_PROJECT_PATH.git $CI_COMMIT_REF_NAME
+  script:
+    - export CHART_VERSION=$(yq e '.version' charts/$CHART_NAME/Chart.yaml)
+    - export CHART_ARCHIVE=${CHART_NAME}-${CHART_VERSION}.tgz
+    - helm dependency update charts/$CHART_NAME
+    - helm package charts/$CHART_NAME
+    - curl -u $HELM_USER:$HELM_PASSWORD -T $CHART_ARCHIVE $HELM_PROD_CHART_REPOSITORY/$CHART_ARCHIVE
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH # Run for all changes to the default branch
