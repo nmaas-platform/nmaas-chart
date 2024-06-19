@@ -1,18 +1,18 @@
 apiVersion: v2
 name: nmaas
 description: GÉANT Network Management as a Service Helm chart for Kubernetes
-version: 1.2.10-beta.2
+version: 1.2.10
 appVersion: 1.6.1
 keywords:
-- Network Management
-- Cloud Deployment
-- Automated Configuration
+  - Network Management
+  - Cloud Deployment
+  - Automated Configuration
 maintainers:
-- email: nmaas-admin@lists.geant.org
-  name: nmaas-platform
-  url: https://docs.nmaas.eu
+  - email: nmaas-admin@lists.geant.org
+    name: nmaas-platform
+    url: https://docs.nmaas.eu
 dependencies:
-- name: postgresql
-  version: 10.16.2
-  repository: https://artifactory.software.geant.org/artifactory/nmaas-helm-mirror
-  condition: postgresql.install
+  - name: postgresql
+    version: 10.16.2
+    repository: https://artifactory.software.geant.org/artifactory/nmaas-helm-mirror
+    condition: postgresql.install
