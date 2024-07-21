@@ -174,15 +174,13 @@ spec:
           {{- end }}
           - name: METRICS_ENABLED
             value: {{ .Values.platform.properties.nmaasMetricsEnabled | default "false" | quote }}
-          - name: GITLAB_ADDRESS
-            value: {{ .Values.platform.properties.gitlab.host }}
-          - name: GITLAB_PORT
-            value: {{ .Values.platform.properties.gitlab.port | quote }}
+          - name: GITLAB_API_URL
+            value: {{ .Values.global.gitlabApiUrl | default "http://nmaas-gitlab-unicorn:8181/api/v4" }}
           - name: GITLAB_TOKEN
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.janitor.properties.gitlabToken.secret.name }}
-                key: {{ .Values.janitor.properties.gitlabToken.secret.key }}
+                name: {{ .Values.global.gitlabApiToken.secret.name }}
+                key: {{ .Values.global.gitlabApiToken.secret.key }}
           - name: K8S_INGRESS_CONTROLLER_INGRESS_CLASS
             value: {{ .Values.platform.properties.k8s.ingress.controller.ingressClass }}
           - name: K8S_INGRESS_CONTROLLER_PUBLIC_INGRESS_CLASS

@@ -1,6 +1,6 @@
 # nmaas
 
-![Version: 1.2.10](https://img.shields.io/badge/Version-1.2.10-informational?style=flat-square) ![AppVersion: 1.6.1](https://img.shields.io/badge/AppVersion-1.6.1-informational?style=flat-square)
+![Version: 1.2.11-1](https://img.shields.io/badge/Version-1.2.11--1-informational?style=flat-square) ![AppVersion: 1.6.2](https://img.shields.io/badge/AppVersion-1.6.2-informational?style=flat-square)
 
 GÉANT Network Management as a Service Helm chart for Kubernetes
 
@@ -23,6 +23,10 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | global.acmeIssuer | bool | `true` | set to no if a wildcard certificate is available |
 | global.createIngressResources | bool | `true` |  |
 | global.demoDeployment | bool | `false` |  |
+| global.gitlabApiToken.literal | string | `""` |  |
+| global.gitlabApiToken.secret.key | string | `"secret"` |  |
+| global.gitlabApiToken.secret.name | string | `"nmaas-gitlab-api-token"` |  |
+| global.gitlabApiUrl | string | `"https://gitlab.example.com/api/v4"` |  |
 | global.helmAccessKeyPrivate | string | `"nmaas-helm-key-private"` |  |
 | global.helmAccessKeyPublic | string | `"nmaas-helm-key-public"` |  |
 | global.ingressName | string | `"nmaas-ingress"` | prefix for the created ingress objects |
@@ -51,10 +55,6 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | janitor.image.tag | string | `"1.6.1"` |  |
 | janitor.name | string | `"nmaas-janitor"` |  |
 | janitor.port | int | `5000` |  |
-| janitor.properties.gitlabApiUrl | string | `"http://nmaas-gitlab-webservice-default:8181/api/v4"` |  |
-| janitor.properties.gitlabToken.literal | string | `""` |  |
-| janitor.properties.gitlabToken.secret.key | string | `"secret"` |  |
-| janitor.properties.gitlabToken.secret.name | string | `"nmaas-gitlab-janitor-token"` |  |
 | janitor.serviceAccountName | string | `"nmaas-janitor"` |  |
 | janitor.targetPort | int | `5000` |  |
 | janitor.type | string | `"ClusterIP"` |  |
@@ -67,7 +67,7 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | platform.enabled | bool | `true` |  |
 | platform.image.pullPolicy | string | `"IfNotPresent"` |  |
 | platform.image.repository | string | `"artifactory.software.geant.org/nmaas-docker-local/nmaas-platform"` |  |
-| platform.image.tag | string | `"1.6.1"` |  |
+| platform.image.tag | string | `"1.6.2"` |  |
 | platform.ingress.className | string | `""` | defaults to .Values.platform.properties.k8s.ingress.controller.ingressClass if not set |
 | platform.initscripts.enabled | bool | `true` |  |
 | platform.initscripts.image.pullPolicy | string | `"Always"` |  |
@@ -93,8 +93,6 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | platform.properties.captchaSecret.secret.key | string | `"secret"` |  |
 | platform.properties.captchaSecret.secret.name | string | `"nmaas-captcha-secret-secret"` |  |
 | platform.properties.defaultLanguage | string | `"en"` |  |
-| platform.properties.gitlab.host | string | `"nmaas-gitlab-webservice-default"` | replace with service name from GitLab, e.g <MY_GITLAB_RELEASE>-webservice-default |
-| platform.properties.gitlab.port | int | `8080` |  |
 | platform.properties.helm.address | string | `"nmaas-helm"` |  |
 | platform.properties.helm.asyncUpdateCron | string | `"0 0 * * * ?"` |  |
 | platform.properties.helm.asyncUpdateEnabled | bool | `true` |  |
@@ -155,7 +153,7 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | portal.enabled | bool | `true` |  |
 | portal.image.pullPolicy | string | `"IfNotPresent"` |  |
 | portal.image.repository | string | `"artifactory.software.geant.org/nmaas-docker-local/nmaas-portal"` |  |
-| portal.image.tag | string | `"1.6.1"` |  |
+| portal.image.tag | string | `"1.6.2"` |  |
 | portal.ingress.className | string | `""` | defaults to .Values.platform.properties.k8s.ingress.controller.ingressClass if not set |
 | portal.name | string | `"nmaas-portal"` |  |
 | portal.port | int | `9009` |  |

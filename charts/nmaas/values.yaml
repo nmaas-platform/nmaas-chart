@@ -15,6 +15,12 @@ global:
   # -- currently not needed, for future use
   registrysecret: nmaas-registry
   demoDeployment: false
+  gitlabApiUrl: https://gitlab.example.com/api/v4
+  gitlabApiToken:
+    literal: ""
+    secret:
+      name: nmaas-gitlab-api-token
+      key: secret
 
 platform:
   enabled: true
@@ -52,7 +58,7 @@ platform:
     timeoutSeconds: 10
   image:
     repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-platform
-    tag: "1.6.1"
+    tag: "1.6.2"
     pullPolicy: IfNotPresent
   port: 9001
   targetPort: 9001
@@ -138,10 +144,6 @@ platform:
       from: ""
       # -- exposed as SMTP_FROM_DEFAULT_DOMAIN in global deployment parameters
       defaultDomain: 'example.com'
-    gitlab:
-      # -- replace with service name from GitLab, e.g <MY_GITLAB_RELEASE>-webservice-default
-      host: nmaas-gitlab-webservice-default
-      port: 8080
     k8s:
       ingress:
         controller:
@@ -184,7 +186,7 @@ portal:
   name: nmaas-portal
   image:
     repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-portal
-    tag: "1.6.1"
+    tag: "1.6.2"
     pullPolicy: IfNotPresent
   ingress:
     # -- defaults to .Values.platform.properties.k8s.ingress.controller.ingressClass if not set
@@ -288,13 +290,6 @@ janitor:
   targetPort: 5000
   serviceAccountName: nmaas-janitor
   type: ClusterIP
-  properties:
-    gitlabToken:
-      literal: ""
-      secret:
-        name: nmaas-gitlab-janitor-token
-        key: secret
-    gitlabApiUrl: http://nmaas-gitlab-webservice-default:8181/api/v4
 
 # -- settings for in-cluster postgresql
 postgresql:

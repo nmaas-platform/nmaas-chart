@@ -33,12 +33,12 @@ spec:
           - name: SERVER_PORT
             value: {{ .Values.janitor.port | quote }}
           - name: GITLAB_URL
-            value: {{ .Values.janitor.properties.gitlabApiUrl | default "http://nmaas-gitlab-unicorn:8181/api/v4" }}
+            value: {{ .Values.global.gitlabApiUrl | default "http://nmaas-gitlab-unicorn:8181/api/v4" }}
           - name: GITLAB_TOKEN
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.janitor.properties.gitlabToken.secret.name }}
-                key: {{ .Values.janitor.properties.gitlabToken.secret.key }}
+                name: {{ .Values.global.gitlabApiToken.secret.name }}
+                key: {{ .Values.global.gitlabApiToken.secret.key }}
       imagePullSecrets:
       - name: {{ .Values.global.registrysecret }}
 {{- end -}}
