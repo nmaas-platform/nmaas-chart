@@ -58,7 +58,7 @@ platform:
     timeoutSeconds: 10
   image:
     repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-platform
-    tag: "1.6.2"
+    tag: "1.6.3"
     pullPolicy: IfNotPresent
   port: 9001
   targetPort: 9001
@@ -82,7 +82,7 @@ platform:
     enabled: true
     image:
       repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-platform-populate
-      tag: "v1.5.4"
+      tag: "1.6.3"
       pullPolicy: Always
   properties:
     maintenance: false
@@ -186,7 +186,7 @@ portal:
   name: nmaas-portal
   image:
     repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-portal
-    tag: "1.6.2"
+    tag: "1.6.3"
     pullPolicy: IfNotPresent
   ingress:
     # -- defaults to .Values.platform.properties.k8s.ingress.controller.ingressClass if not set
@@ -197,6 +197,8 @@ portal:
   tls: true
   properties:
     tokenName: token
+    # -- customizes the layout of the landing page according to chosen use-case scenario. Possible values are VLAB and VNOC
+    landingPageFlavor: "VLAB"
     captchaKey:
       # -- empty to use existing secret specified below
       literal: ""
