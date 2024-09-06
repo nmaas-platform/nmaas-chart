@@ -1,6 +1,6 @@
 # nmaas
 
-![Version: 1.2.12-1](https://img.shields.io/badge/Version-1.2.12--1-informational?style=flat-square) ![AppVersion: 1.6.2](https://img.shields.io/badge/AppVersion-1.6.2-informational?style=flat-square)
+![Version: 1.2.12-1](https://img.shields.io/badge/Version-1.2.12--1-informational?style=flat-square) ![AppVersion: 1.6.3](https://img.shields.io/badge/AppVersion-1.6.3-informational?style=flat-square)
 
 GÉANT Network Management as a Service Helm chart for Kubernetes
 
@@ -67,12 +67,12 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | platform.enabled | bool | `true` |  |
 | platform.image.pullPolicy | string | `"IfNotPresent"` |  |
 | platform.image.repository | string | `"artifactory.software.geant.org/nmaas-docker-local/nmaas-platform"` |  |
-| platform.image.tag | string | `"1.6.2"` |  |
+| platform.image.tag | string | `"1.6.3"` |  |
 | platform.ingress.className | string | `""` | defaults to .Values.platform.properties.k8s.ingress.controller.ingressClass if not set |
 | platform.initscripts.enabled | bool | `true` |  |
 | platform.initscripts.image.pullPolicy | string | `"Always"` |  |
 | platform.initscripts.image.repository | string | `"artifactory.software.geant.org/nmaas-docker-local/nmaas-platform-populate"` |  |
-| platform.initscripts.image.tag | string | `"v1.5.4"` |  |
+| platform.initscripts.image.tag | string | `"1.6.3"` |  |
 | platform.livenessProbe.failureThreshold | int | `10` |  |
 | platform.livenessProbe.httpGet.path | string | `"/actuator/health"` |  |
 | platform.livenessProbe.httpGet.port | int | `9001` |  |
@@ -153,7 +153,7 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | portal.enabled | bool | `true` |  |
 | portal.image.pullPolicy | string | `"IfNotPresent"` |  |
 | portal.image.repository | string | `"artifactory.software.geant.org/nmaas-docker-local/nmaas-portal"` |  |
-| portal.image.tag | string | `"1.6.2"` |  |
+| portal.image.tag | string | `"1.6.3"` |  |
 | portal.ingress.className | string | `""` | defaults to .Values.platform.properties.k8s.ingress.controller.ingressClass if not set |
 | portal.name | string | `"nmaas-portal"` |  |
 | portal.port | int | `9009` |  |
