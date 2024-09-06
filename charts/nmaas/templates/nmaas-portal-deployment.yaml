@@ -37,6 +37,8 @@ spec:
           {{- end }}
           - name: TOKEN_NAME
             value: {{ .Values.portal.properties.tokenName }}
+          - name: LANDING_PAGE
+            value: {{ .Values.portal.properties.landingPageFlavor | quote }}
           {{- if not .Values.global.demoDeployment }}
           - name: CAPTCHA_KEY
             valueFrom:

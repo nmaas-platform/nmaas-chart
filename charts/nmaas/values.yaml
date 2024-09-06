@@ -197,6 +197,8 @@ portal:
   tls: true
   properties:
     tokenName: token
+    # -- customizes the layout of the landing page according to chosen use-case scenario. Possible values are VLAB and VNOC
+    landingPageFlavor: "VLAB"
     captchaKey:
       # -- empty to use existing secret specified below
       literal: ""
