@@ -1,6 +1,6 @@
 # nmaas
 
-![Version: 1.2.11](https://img.shields.io/badge/Version-1.2.11-informational?style=flat-square) ![AppVersion: 1.6.2](https://img.shields.io/badge/AppVersion-1.6.2-informational?style=flat-square)
+![Version: 1.2.12-1](https://img.shields.io/badge/Version-1.2.12--1-informational?style=flat-square) ![AppVersion: 1.6.2](https://img.shields.io/badge/AppVersion-1.6.2-informational?style=flat-square)
 
 GÉANT Network Management as a Service Helm chart for Kubernetes
 
@@ -160,6 +160,7 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | portal.properties.captchaKey.literal | string | `""` | empty to use existing secret specified below |
 | portal.properties.captchaKey.secret.key | string | `"secret"` |  |
 | portal.properties.captchaKey.secret.name | string | `"nmaas-captcha-key-secret"` |  |
+| portal.properties.landingPageFlavor | string | `"VLAB"` | customizes the layout of the landing page according to chosen use-case scenario. Possible values are VLAB and VNOC |
 | portal.properties.tokenName | string | `"token"` |  |
 | portal.targetPort | int | `9009` |  |
 | portal.tls | bool | `true` |  |
