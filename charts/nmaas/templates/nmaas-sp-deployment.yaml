@@ -48,7 +48,13 @@ spec:
           - name: SP_HOST
             value: {{ .Values.sp.host | default .Values.global.nmaasDomain | quote }}
           - name: SP_USED_ID
-            value: {{ .Values.sp.properties.idp.userId }}
+            value: {{ .Values.sp.properties.idp.userId | quote }}
+          - name: SP_REMOTE_USER
+            value: {{ .Values.sp.properties.idp.remoteUser | quote }}
+          - name: SP_SSO_ENTITY_ID
+            value: {{ .Values.sp.properties.idp.entityId | quote }}
+          - name: SP_METADATA_URL
+            value: {{ .Values.sp.properties.idp.metadataUrl | quote }}
       imagePullSecrets:
       - name: {{ .Values.global.registrysecret }}
 {{- end -}}
