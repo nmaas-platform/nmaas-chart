@@ -1,6 +1,6 @@
 # nmaas
 
-![Version: 1.2.12](https://img.shields.io/badge/Version-1.2.12-informational?style=flat-square) ![AppVersion: 1.6.3](https://img.shields.io/badge/AppVersion-1.6.3-informational?style=flat-square)
+![Version: 1.2.13-1](https://img.shields.io/badge/Version-1.2.13--1-informational?style=flat-square) ![AppVersion: 1.6.3](https://img.shields.io/badge/AppVersion-1.6.3-informational?style=flat-square)
 
 GÉANT Network Management as a Service Helm chart for Kubernetes
 
@@ -182,11 +182,14 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | sp.enabled | bool | `false` |  |
 | sp.image.pullPolicy | string | `"Always"` |  |
 | sp.image.repository | string | `"artifactory.software.geant.org/nmaas-docker-local/nmaas-sp"` |  |
-| sp.image.tag | string | `"1.2.0"` |  |
+| sp.image.tag | string | `"1.6.3"` |  |
 | sp.ingress.className | string | `""` | defaults to .Values.platform.properties.k8s.ingress.controller.ingressClass if not set |
 | sp.name | string | `"nmaas-sp"` |  |
 | sp.port | int | `443` |  |
+| sp.properties.idp.entityId | string | `"https://keycloak.example.com/realms/master"` |  |
+| sp.properties.idp.metadataUrl | string | `"https://keycloak.example.com/realms/master/protocol/saml/descriptor"` |  |
 | sp.properties.idp.name | string | `"edugain"` |  |
+| sp.properties.idp.remoteUser | string | `"email"` |  |
 | sp.properties.idp.uri | string | `"https://login.terena.org/wayf/saml2/idp/metadata.php"` |  |
 | sp.properties.idp.userId | string | `"uid"` |  |
 | sp.targetPort | int | `80` |  |
