@@ -245,7 +245,7 @@ sp:
   name: nmaas-sp
   image:
     repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-sp
-    tag: "1.2.0"
+    tag: "1.6.3"
     pullPolicy: Always
   ingress:
     # -- defaults to .Values.platform.properties.k8s.ingress.controller.ingressClass if not set
@@ -259,6 +259,9 @@ sp:
       name: edugain
       uri: https://login.terena.org/wayf/saml2/idp/metadata.php
       userId: uid
+      remoteUser: email
+      entityId: https://keycloak.example.com/realms/master
+      metadataUrl: https://keycloak.example.com/realms/master/protocol/saml/descriptor
 
 helm:
   enabled: true
