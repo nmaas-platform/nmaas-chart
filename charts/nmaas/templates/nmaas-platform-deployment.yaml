@@ -104,7 +104,11 @@ spec:
           - name: PLATFORM_PORT
             value: "{{ .Values.platform.port }}"
           - name: PORTAL_HOST
-            value: {{ .Values.global.portalHost | default .Values.global.nmaasDomain | quote }}
+          {{- if .Values.portal.tls }}
+            value: {{ (printf "https://%s" (.Values.global.portalHost | default .Values.global.nmaasDomain)) | quote }}
+          {{- else }}
+            value: {{ (printf "http://%s" (.Values.global.portalHost | default .Values.global.nmaasDomain)) | quote }}
+          {{- end }}
           - name: DEPLOYMENT_CHECK_INTERVAL
             value: {{ .Values.platform.properties.serviceDeploymentCheckInterval | quote }}
           - name: DEPLOYMENT_CHECK_TIMEOUT
