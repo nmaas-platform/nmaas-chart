@@ -21,7 +21,7 @@ spec:
       labels:
         app: {{ .Values.platform.name }}
     spec:
-      serviceAccount: nmaas-platform
+      serviceAccount: {{ .Values.platform.serviceAccountName }}
       volumes:
       - name: platform-data
       {{- if .Values.platform.persistence.enabled }}
@@ -56,15 +56,17 @@ spec:
         - name: helm-access-key
           mountPath: /nmaas/.ssh
         env:
+          - name: ENVIRONMENT
+            value: "{{ .Values.platform.properties.environment }}"
           {{- if .Values.postgresql.install }}
           - name: POSTGRESQL_HOST
-            value: {{ .Release.Name }}-postgresql
+            value: {{ .Release.Name }}-postgresql-hl
           - name: POSTGRESQL_DBNAME
-            value: {{ .Values.postgresql.postgresqlDatabase }}
+            value: {{ .Values.postgresql.auth.database }}
           - name: POSTGRESQL_USERNAME
-            value: {{ .Values.postgresql.postgresqlUsername }}
+            value: {{ .Values.postgresql.auth.username }}
           - name: POSTGRESQL_PASSWORD
-            value: {{ .Values.postgresql.postgresqlPassword }}
+            value: {{ .Values.postgresql.auth.password }}
           - name: POSTGRESQL_PORT
             value: "5432"
           {{- else }}
@@ -82,10 +84,6 @@ spec:
           - name: POSTGRESQL_PORT
             value: {{ .Values.platform.properties.postgresql.port | quote }}
           {{- end }}
-          - name: SSO_URL_LOGIN
-            value: {{ .Values.platform.properties.sso.urlLogin | default (printf "https://%s/sso" .Values.global.nmaasDomain) | quote }}
-          - name: SSO_URL_LOGOUT
-            value: {{ .Values.platform.properties.sso.urlLogout | default (printf "https://%s/Shibboleth.sso/Logout" .Values.global.nmaasDomain) | quote }}
           - name: ADMIN_EMAIL
             value: {{ .Values.platform.properties.adminEmail }}
           - name: ADMIN_PASSWORD
@@ -122,15 +120,6 @@ spec:
               secretKeyRef:
                 name: {{ .Values.platform.apiSecret.secret.name }}
                 key: {{ .Values.platform.apiSecret.secret.key }}
-          {{- if .Values.platform.properties.sso.enabled }}
-          - name: SSO_KEY
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Values.platform.properties.sso.encryptionSecret.secret.name }}
-                key: {{ .Values.platform.properties.sso.encryptionSecret.secret.key }}
-          - name: SSO_TIMEOUT
-            value: "{{ .Values.platform.properties.sso.timeout }}"
-          {{- end }}
           - name: SMTP_LOGIN
             value: {{ .Values.platform.properties.smtp.login }}
           - name: SMTP_PASSWORD
@@ -209,8 +198,6 @@ spec:
             value: {{ .Values.platform.properties.k8s.deployment.defaultStorageClass }}
           - name: PORTAL_MAINTENANCE_FLAG
             value: {{ .Values.platform.properties.maintenance | quote }}
-          - name: PORTAL_SSO_ALLOWED_FLAG
-            value: {{ .Values.platform.properties.sso.enabled | quote }}
           - name: PORTAL_TEST_INSTANCE_FLAG
             value: {{ .Values.platform.properties.testInstance | quote }}
           - name: PORTAL_SEND_FAILURE_NOTIF_FLAG
@@ -229,6 +216,31 @@ spec:
             value: {{ .Values.platform.properties.showDomainRegistrationSelector | quote }}
           - name: NAMESPACE_CREATION_ENABLED
             value: {{ .Values.platform.properties.autoNamespaceCreationForDomains | quote }}
+          - name: PORTAL_SSO_ALLOWED_FLAG
+            value: {{ .Values.platform.properties.oidc.enabled | quote }}
+          - name: OIDC_CLIENT_ID
+            value: {{ .Values.platform.properties.oidc.clientId | quote }}
+          - name: OIDC_ISSUER_URI
+            value: {{ .Values.platform.properties.oidc.issuerUri | quote }}
+          - name: MULTI_INSTANCE_DEPLOYMENT
+            value: {{ .Values.platform.properties.multiInstanceSupport | quote }}
+          - name: OIDC_USER_LINKING
+            value: {{ .Values.platform.properties.oidcUserLinking | quote }}
+          - name: OIDC_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.platform.properties.oidc.secretName }}
+                key: {{ .Values.platform.properties.oidc.clientSecret.secret.key }}
+          - name: JWT_SIGNING_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.platform.properties.jwt.secretName }}
+                key: {{ .Values.platform.properties.jwt.signingKey.secret.key }}
+          - name: JWT_RESET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.platform.properties.jwt.secretName }}
+                key: {{ .Values.platform.properties.jwt.resetKey.secret.key }}
       imagePullSecrets:
       - name: {{ .Values.global.registrysecret }}
 {{- end -}}

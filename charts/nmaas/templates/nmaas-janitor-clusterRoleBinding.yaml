@@ -1,12 +1,12 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: nmaas-janitor
+  name: {{ .Values.janitor.clusterRoleBindingName }}
 subjects:
 - kind: ServiceAccount
-  name: nmaas-janitor
+  name: {{ .Values.janitor.serviceAccountName }}
   namespace: {{ .Release.Namespace }}
 roleRef:
   kind: ClusterRole 
-  name: janitor-role
+  name: {{ .Values.janitor.clusterRoleName }}
   apiGroup: rbac.authorization.k8s.io
