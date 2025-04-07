@@ -1,6 +1,6 @@
 # nmaas
 
-![Version: 1.2.17](https://img.shields.io/badge/Version-1.2.17-informational?style=flat-square) ![AppVersion: 1.6.5](https://img.shields.io/badge/AppVersion-1.6.5-informational?style=flat-square)
+![Version: 2.0.0-1](https://img.shields.io/badge/Version-2.0.0--1-informational?style=flat-square) ![AppVersion: 1.7.0](https://img.shields.io/badge/AppVersion-1.7.0-informational?style=flat-square)
 
 GÉANT Network Management as a Service Helm chart for Kubernetes
 
@@ -14,7 +14,7 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://artifactory.software.geant.org/artifactory/nmaas-helm-mirror | postgresql | 10.16.2 |
+| https://artifactory.software.geant.org/artifactory/nmaas-helm-mirror | postgresql | 16.6.0 |
 
 ## Values
 
@@ -34,6 +34,8 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | global.nmaasDomain | string | `"nmaas.example.com"` |  |
 | global.registrysecret | string | `"nmaas-registry"` | currently not needed, for future use |
 | global.wildcardCertificateName | string | `"wildcard-tls"` |  |
+| helm.clusterRoleBindingName | string | `"nmaas-helm-admin"` |  |
+| helm.clusterRoleName | string | `"cluster-admin"` |  |
 | helm.enabled | bool | `true` |  |
 | helm.image.pullPolicy | string | `"Always"` |  |
 | helm.image.repository | string | `"artifactory.software.geant.org/nmaas-docker-local/nmaas-helm-3"` |  |
@@ -49,10 +51,12 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | helm.serviceAccountName | string | `"nmaas-helm"` |  |
 | helm.targetPort | int | `22` |  |
 | helm.type | string | `"ClusterIP"` |  |
+| janitor.clusterRoleBindingName | string | `"nmaas-janitor"` |  |
+| janitor.clusterRoleName | string | `"janitor-role"` |  |
 | janitor.enabled | bool | `true` |  |
 | janitor.image.pullPolicy | string | `"IfNotPresent"` |  |
 | janitor.image.repository | string | `"artifactory.software.geant.org/nmaas-docker-local/nmaas-janitor"` |  |
-| janitor.image.tag | string | `"1.6.1"` |  |
+| janitor.image.tag | string | `"1.7.0"` |  |
 | janitor.name | string | `"nmaas-janitor"` |  |
 | janitor.port | int | `5000` |  |
 | janitor.serviceAccountName | string | `"nmaas-janitor"` |  |
@@ -64,15 +68,17 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | platform.apiSecret.literal | string | `""` | leave empty to use existing secret specified below |
 | platform.apiSecret.secret.key | string | `"secret"` |  |
 | platform.apiSecret.secret.name | string | `"nmaas-api-secret"` | must be created manually if literal is empty |
+| platform.clusterRoleBindingName | string | `"nmaas-platform"` |  |
+| platform.clusterRoleName | string | `"nmaas-shell-role"` |  |
 | platform.enabled | bool | `true` |  |
 | platform.image.pullPolicy | string | `"IfNotPresent"` |  |
 | platform.image.repository | string | `"artifactory.software.geant.org/nmaas-docker-local/nmaas-platform"` |  |
-| platform.image.tag | string | `"1.6.5"` |  |
+| platform.image.tag | string | `"1.7.0"` |  |
 | platform.ingress.className | string | `""` | defaults to .Values.platform.properties.k8s.ingress.controller.ingressClass if not set |
 | platform.initscripts.enabled | bool | `true` |  |
 | platform.initscripts.image.pullPolicy | string | `"Always"` |  |
 | platform.initscripts.image.repository | string | `"artifactory.software.geant.org/nmaas-docker-local/nmaas-platform-populate"` |  |
-| platform.initscripts.image.tag | string | `"1.6.5"` |  |
+| platform.initscripts.image.tag | string | `"1.7.0"` |  |
 | platform.livenessProbe.failureThreshold | int | `10` |  |
 | platform.livenessProbe.httpGet.path | string | `"/actuator/health"` |  |
 | platform.livenessProbe.httpGet.port | int | `9001` |  |
@@ -93,6 +99,7 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | platform.properties.captchaSecret.secret.key | string | `"secret"` |  |
 | platform.properties.captchaSecret.secret.name | string | `"nmaas-captcha-secret-secret"` |  |
 | platform.properties.defaultLanguage | string | `"en"` |  |
+| platform.properties.environment | string | `"prod"` |  |
 | platform.properties.helm.address | string | `"nmaas-helm"` |  |
 | platform.properties.helm.asyncUpdateCron | string | `"0 0 * * * ?"` |  |
 | platform.properties.helm.asyncUpdateEnabled | bool | `true` |  |
@@ -103,6 +110,11 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | platform.properties.helm.useLocalCharts | bool | `false` |  |
 | platform.properties.helm.username | string | `"helm"` |  |
 | platform.properties.helm.version | string | `"v3"` |  |
+| platform.properties.jwt.resetKey.literal | string | `""` | leave empty to use existing secret, length at least 96 characters |
+| platform.properties.jwt.resetKey.secret.key | string | `"jwtResetKey"` |  |
+| platform.properties.jwt.secretName | string | `"nmaas-jwt"` |  |
+| platform.properties.jwt.signingKey.literal | string | `""` | leave empty to use existing secret, length at least 96 characters |
+| platform.properties.jwt.signingKey.secret.key | string | `"jwtSigningKey"` |  |
 | platform.properties.k8s.deployment.defaultNamespace | string | `"default"` | parameter used only if USE_DEFAULT_NAMESPACE option is set |
 | platform.properties.k8s.deployment.defaultStorageClass | string | `nil` | should be left blank if default storage class was defined defined at cluster should be used |
 | platform.properties.k8s.deployment.namespaceConfigOption | string | `"USE_DOMAIN_NAMESPACE"` | two options possible: USE_DOMAIN_NAMESPACE or USE_DEFAULT_NAMESPACE |
@@ -116,7 +128,15 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | platform.properties.k8s.ingress.controller.publicServiceDomain | string | `"public.nmaas.example.com"` | base FQDN for deployed user applications exposed publicly (e.g. public.nmaas.example.com) |
 | platform.properties.k8s.ingress.controller.tlsSupported | bool | `true` | flag indicating if ingress controller(s) support TLS |
 | platform.properties.maintenance | bool | `false` |  |
+| platform.properties.multiInstanceSupport | bool | `false` |  |
 | platform.properties.nmaasMetricsEnabled | bool | `true` | expose Prometheus metrics |
+| platform.properties.oidc.clientId | string | `""` |  |
+| platform.properties.oidc.clientSecret.literal | string | `""` | leave empty to use existing secret |
+| platform.properties.oidc.clientSecret.secret.key | string | `"oidcClientSecret"` |  |
+| platform.properties.oidc.enabled | bool | `false` |  |
+| platform.properties.oidc.issuerUri | string | `"https://auth.example.com/realms/master"` |  |
+| platform.properties.oidc.secretName | string | `"nmaas-oidc"` |  |
+| platform.properties.oidcUserLinking | bool | `true` |  |
 | platform.properties.postgresql | object | `{"database":"nmaas","hostname":"nmaas-postgresql","password":{"literal":"","secret":{"key":"secret","name":"nmaas-postgresql-secret"}},"port":5432,"username":"nmaas"}` | only required if an external postgresql instance is used (when postgresql.install is false) |
 | platform.properties.postgresql.password.literal | string | `""` | leave empty to use existing secret specified below |
 | platform.properties.sendAppInstanceFailureEmails | bool | `false` |  |
@@ -129,19 +149,13 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | platform.properties.smtp.defaultDomain | string | `"example.com"` | exposed as SMTP_FROM_DEFAULT_DOMAIN in global deployment parameters |
 | platform.properties.smtp.from | string | `""` | override default SMTP from value |
 | platform.properties.smtp.host | string | `"nmaas-postfix"` |  |
-| platform.properties.sso.enabled | bool | `false` |  |
-| platform.properties.sso.encryptionSecret.literal | string | `""` | leave empty to use existing secret specified below |
-| platform.properties.sso.encryptionSecret.secret.key | string | `"secret"` |  |
-| platform.properties.sso.encryptionSecret.secret.name | string | `"nmaas-sp-secret"` | must be created manually if literal is empty |
-| platform.properties.sso.timeout | int | `15` |  |
-| platform.properties.sso.urlLogin | string | `""` |  |
-| platform.properties.sso.urlLogout | string | `""` |  |
 | platform.properties.testInstance | bool | `false` |  |
 | platform.readinessProbe.failureThreshold | int | `10` |  |
 | platform.readinessProbe.httpGet.path | string | `"/actuator/health"` |  |
 | platform.readinessProbe.httpGet.port | int | `9001` |  |
 | platform.readinessProbe.periodSeconds | int | `15` |  |
 | platform.readinessProbe.timeoutSeconds | int | `10` |  |
+| platform.serviceAccountName | string | `"nmaas-platform"` |  |
 | platform.startupProbe.failureThreshold | int | `30` |  |
 | platform.startupProbe.httpGet.path | string | `"/actuator/health"` |  |
 | platform.startupProbe.httpGet.port | int | `9001` |  |
@@ -153,7 +167,7 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | portal.enabled | bool | `true` |  |
 | portal.image.pullPolicy | string | `"IfNotPresent"` |  |
 | portal.image.repository | string | `"artifactory.software.geant.org/nmaas-docker-local/nmaas-portal"` |  |
-| portal.image.tag | string | `"1.6.5"` |  |
+| portal.image.tag | string | `"1.7.0"` |  |
 | portal.ingress.className | string | `""` | defaults to .Values.platform.properties.k8s.ingress.controller.ingressClass if not set |
 | portal.name | string | `"nmaas-portal"` |  |
 | portal.port | int | `9009` |  |
@@ -177,24 +191,8 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | postfix.properties.smtp.password.literal | string | `""` | leave empty to use existing secret |
 | postfix.properties.smtp.username.literal | string | `""` | leave empty to use existing secret |
 | postfix.type | string | `"ClusterIP"` |  |
-| postgresql | object | `{"install":true,"persistence":{"enabled":true,"size":"8Gi"},"postgresqlDatabase":"nmaas","postgresqlPassword":"nmaas","postgresqlUsername":"nmaas"}` | settings for in-cluster postgresql |
+| postgresql | object | `{"auth":{"database":"nmaas","password":"nmaas","postgresPassword":"nmaas","username":"nmaas"},"install":true,"primary":{"networkPolicy":{"enabled":false},"persistence":{"enabled":true,"size":"8Gi"}}}` | settings for in-cluster postgresql |
 | replicaCount | int | `1` |  |
-| sp.enabled | bool | `false` |  |
-| sp.image.pullPolicy | string | `"Always"` |  |
-| sp.image.repository | string | `"artifactory.software.geant.org/nmaas-docker-local/nmaas-sp"` |  |
-| sp.image.tag | string | `"1.6.3"` |  |
-| sp.ingress.className | string | `""` | defaults to .Values.platform.properties.k8s.ingress.controller.ingressClass if not set |
-| sp.name | string | `"nmaas-sp"` |  |
-| sp.port | int | `443` |  |
-| sp.properties.idp.entityId | string | `"https://keycloak.example.com/realms/master"` |  |
-| sp.properties.idp.metadataUrl | string | `"https://keycloak.example.com/realms/master/protocol/saml/descriptor"` |  |
-| sp.properties.idp.name | string | `"edugain"` |  |
-| sp.properties.idp.remoteUser | string | `"email"` |  |
-| sp.properties.idp.uri | string | `"https://login.terena.org/wayf/saml2/idp/metadata.php"` |  |
-| sp.properties.idp.userId | string | `"uid"` |  |
-| sp.targetPort | int | `80` |  |
-| sp.tls | bool | `true` |  |
-| sp.type | string | `"ClusterIP"` |  |
 
 ----------------------------------------------
 Autogenerated from chart metadata using [helm-docs v1.13.1](https://github.com/norwoodj/helm-docs/releases/v1.13.1)

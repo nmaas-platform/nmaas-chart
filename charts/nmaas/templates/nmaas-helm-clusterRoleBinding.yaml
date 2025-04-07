@@ -1,11 +1,11 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: nmaas-helm-admin
+  name: {{ .Values.helm.clusterRoleBindingName }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: cluster-admin
+  name: {{ .Values.helm.clusterRoleName }}
 subjects:
 - kind: ServiceAccount
   name: {{ .Values.helm.serviceAccountName }}

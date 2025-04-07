@@ -25,6 +25,9 @@ global:
 platform:
   enabled: true
   name: nmaas-platform
+  serviceAccountName: nmaas-platform
+  clusterRoleName: nmaas-shell-role
+  clusterRoleBindingName: nmaas-platform
   ingress:
     # -- defaults to .Values.platform.properties.k8s.ingress.controller.ingressClass if not set
     className: ''
@@ -58,7 +61,7 @@ platform:
     timeoutSeconds: 10
   image:
     repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-platform
-    tag: "1.6.5"
+    tag: "1.7.0"
     pullPolicy: IfNotPresent
   port: 9001
   targetPort: 9001
@@ -82,11 +85,14 @@ platform:
     enabled: true
     image:
       repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-platform-populate
-      tag: "1.6.5"
+      tag: "1.7.0"
       pullPolicy: Always
   properties:
+    oidcUserLinking: true
+    multiInstanceSupport: false
     maintenance: false
     testInstance: false
+    environment: prod
     defaultLanguage: en
     serviceDeploymentCheckInterval: 10
     serviceDeploymentCheckTimeout: 600
@@ -101,18 +107,6 @@ platform:
     showDomainRegistrationSelector: true
     # -- if true nmaas will automatically create the corresponding Kubernetes namespace for each new domain
     autoNamespaceCreationForDomains: false
-    sso:
-      enabled: false
-      urlLogin: ""
-      urlLogout: ""
-      encryptionSecret:
-        # -- leave empty to use existing secret specified below
-        literal: ""
-        secret:
-          # -- must be created manually if literal is empty
-          name: nmaas-sp-secret
-          key: secret
-      timeout: 15
     adminEmail: admin@example.com
     # -- only required if an external postgresql instance is used (when postgresql.install is false)
     postgresql:
@@ -126,7 +120,6 @@ platform:
         secret:
           name: nmaas-postgresql-secret
           key: secret
-
     helm:
       address: nmaas-helm
       username: helm
@@ -180,13 +173,35 @@ platform:
         key: secret
     # -- expose Prometheus metrics
     nmaasMetricsEnabled: true
+    jwt:
+      secretName: nmaas-jwt
+      signingKey:
+        secret:
+          key: jwtSigningKey
+        # -- leave empty to use existing secret, length at least 96 characters
+        literal: ""
+      resetKey:
+        secret:
+          key: jwtResetKey
+        # -- leave empty to use existing secret, length at least 96 characters
+        literal: ""
+    oidc:
+      enabled: false
+      secretName: nmaas-oidc
+      clientId: ""
+      issuerUri: "https://auth.example.com/realms/master"
+      clientSecret:
+        secret:
+          key: oidcClientSecret
+        # -- leave empty to use existing secret
+        literal: ""
 
 portal:
   enabled: true
   name: nmaas-portal
   image:
     repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-portal
-    tag: "1.6.5"
+    tag: "1.7.0"
     pullPolicy: IfNotPresent
   ingress:
     # -- defaults to .Values.platform.properties.k8s.ingress.controller.ingressClass if not set
@@ -240,33 +255,12 @@ postfix:
         secret:
           key: smtpPassword
 
-sp:
-  enabled: false
-  name: nmaas-sp
-  image:
-    repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-sp
-    tag: "1.6.3"
-    pullPolicy: Always
-  ingress:
-    # -- defaults to .Values.platform.properties.k8s.ingress.controller.ingressClass if not set
-    className: ''
-  port: 443
-  targetPort: 80
-  type: ClusterIP
-  tls: true
-  properties:
-    idp:
-      name: edugain
-      uri: https://login.terena.org/wayf/saml2/idp/metadata.php
-      userId: uid
-      remoteUser: email
-      entityId: https://keycloak.example.com/realms/master
-      metadataUrl: https://keycloak.example.com/realms/master/protocol/saml/descriptor
-
 helm:
   enabled: true
   name: nmaas-helm
   serviceAccountName: nmaas-helm
+  clusterRoleBindingName: nmaas-helm-admin
+  clusterRoleName: cluster-admin
   image:
     repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-helm-3
     tag: "3.9.3"
@@ -289,19 +283,26 @@ janitor:
   name: nmaas-janitor
   image:
     repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-janitor
-    tag: "1.6.1"
+    tag: "1.7.0"
     pullPolicy: IfNotPresent
   port: 5000
   targetPort: 5000
   serviceAccountName: nmaas-janitor
+  clusterRoleName: janitor-role
+  clusterRoleBindingName: nmaas-janitor
   type: ClusterIP
 
 # -- settings for in-cluster postgresql
 postgresql:
   install: true
-  postgresqlUsername: nmaas
-  postgresqlPassword: nmaas
-  postgresqlDatabase: nmaas
-  persistence:
-    enabled: true
-    size: 8Gi
+  auth:
+    username: nmaas
+    password: nmaas
+    database: nmaas
+    postgresPassword: nmaas
+  primary:
+    networkPolicy:
+      enabled: false
+    persistence:
+      enabled: true
+      size: 8Gi
