@@ -61,7 +61,7 @@ platform:
     timeoutSeconds: 10
   image:
     repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-platform
-    tag: "1.7.0"
+    tag: "1.7.1"
     pullPolicy: IfNotPresent
   port: 9001
   targetPort: 9001
@@ -201,7 +201,7 @@ portal:
   name: nmaas-portal
   image:
     repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-portal
-    tag: "1.7.0"
+    tag: "1.7.1"
     pullPolicy: IfNotPresent
   ingress:
     # -- defaults to .Values.platform.properties.k8s.ingress.controller.ingressClass if not set
