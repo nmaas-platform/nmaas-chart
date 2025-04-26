@@ -53,8 +53,9 @@ spec:
         - name: platform-data
           mountPath: /nmaas/files
           subPath: platform-logs
-        - name: helm-access-key
-          mountPath: /nmaas/.ssh
+        - name: platform-data
+          mountPath: /home/nmaas/.config/helm
+          subPath: helm
         env:
           - name: ENVIRONMENT
             value: "{{ .Values.platform.properties.environment }}"
@@ -137,23 +138,11 @@ spec:
           - name: USE_LOGIN_PASSWORD
             value: {{ and .Values.platform.properties.smtp.login .Values.platform.properties.smtp.password }}
           - name: USE_STARTTLS
-            value: {{ .Values.platform.properties.smtp.useStartTLS | default "false" | quote}}
-          - name: HELM_ADDRESS
-            value: "{{ .Values.platform.properties.helm.address }}"
-          - name: HELM_USERNAME
-            value: "{{ .Values.platform.properties.helm.username }}"
-          - name: HELM_USELOCALCHARTS
-            value: "{{ .Values.platform.properties.helm.useLocalCharts }}"
+            value: {{ .Values.platform.properties.smtp.useStartTLS | default "false" | quote }}
           - name: HELM_REPOSITORY
             value: "{{ .Values.platform.properties.helm.repositoryName }}"
           - name: HELM_REPOSITORY_URL
             value: "{{ .Values.platform.properties.helm.repositoryUrl }}"
-          - name: HELM_LOCALCHARTSDIR
-            value: "{{ .Values.platform.properties.helm.chartsDirectory }}"
-          - name: HELM_ENABLETLS
-            value: "{{ .Values.platform.properties.helm.enableTls }}"
-          - name: HELM_VERSION
-            value: "{{ .Values.platform.properties.helm.version }}"
           - name: HELM_UPDATE_ASYNC_ENABLED 
             value: "{{ .Values.platform.properties.helm.asyncUpdateEnabled }}"
           - name: HELM_UPDATE_ASYNC_CRON

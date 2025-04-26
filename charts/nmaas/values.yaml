@@ -26,7 +26,8 @@ platform:
   enabled: true
   name: nmaas-platform
   serviceAccountName: nmaas-platform
-  clusterRoleName: nmaas-shell-role
+  # -- name of ClusterRole to associate to nmaas-platform. Must exist beforehand
+  clusterRoleName: cluster-admin
   clusterRoleBindingName: nmaas-platform
   ingress:
     # -- defaults to .Values.platform.properties.k8s.ingress.controller.ingressClass if not set
@@ -61,7 +62,7 @@ platform:
     timeoutSeconds: 10
   image:
     repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-platform
-    tag: "1.7.1"
+    tag: "latest"
     pullPolicy: IfNotPresent
   port: 9001
   targetPort: 9001
@@ -121,14 +122,8 @@ platform:
           name: nmaas-postgresql-secret
           key: secret
     helm:
-      address: nmaas-helm
-      username: helm
-      useLocalCharts: false
       repositoryName: nmaas
       repositoryUrl: https://artifactory.software.geant.org/artifactory/nmaas-helm
-      chartsDirectory: /home/nmaas/charts
-      enableTls: true
-      version: v3
       asyncUpdateEnabled: true
       asyncUpdateCron: "0 0 * * * ?"
     smtp:
@@ -201,7 +196,7 @@ portal:
   name: nmaas-portal
   image:
     repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-portal
-    tag: "1.7.1"
+    tag: "latest"
     pullPolicy: IfNotPresent
   ingress:
     # -- defaults to .Values.platform.properties.k8s.ingress.controller.ingressClass if not set
@@ -254,29 +249,6 @@ postfix:
         literal: ""
         secret:
           key: smtpPassword
-
-helm:
-  enabled: true
-  name: nmaas-helm
-  serviceAccountName: nmaas-helm
-  clusterRoleBindingName: nmaas-helm-admin
-  clusterRoleName: cluster-admin
-  image:
-    repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-helm-3
-    tag: "3.9.3"
-    pullPolicy: Always
-  port: 22
-  targetPort: 22
-  type: ClusterIP
-  properties:
-    users: helm:1000:1000
-  persistence:
-    enabled: true
-    # -- name of an existing claim to be used. If empty, a new one is provisioned.
-    existingClaim: ""
-    accessMode: ReadWriteOnce
-    size: 1Gi
-    storageClass: ""
 
 janitor:
   enabled: true
