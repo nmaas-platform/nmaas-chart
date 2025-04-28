@@ -21,8 +21,7 @@ version-bump-dev:
     - git checkout $CI_COMMIT_REF_NAME
     - git branch --set-upstream-to=origin/$CI_COMMIT_REF_NAME $CI_COMMIT_REF_NAME
     - git status
-    - rm -fr ".git/rebase-merge"
-    - git rebase --abort
+    - git rebase --continue
     - git pull
     - export CURRENT_CHART_VERSION=$(yq e '.version' charts/$CHART_NAME/Chart.yaml)
     - export CURRENT_DOCKER_IMAGE_VERSION=$(yq e '.platform.image.tag' charts/$CHART_NAME/values.yaml)
