@@ -207,6 +207,7 @@ spec:
             value: {{ .Values.platform.properties.autoNamespaceCreationForDomains | quote }}
           - name: PORTAL_SSO_ALLOWED_FLAG
             value: {{ .Values.platform.properties.oidc.enabled | quote }}
+          {{- if .Values.properties.oidc.enabled }}
           - name: OIDC_CLIENT_ID
             value: {{ .Values.platform.properties.oidc.clientId | quote }}
           - name: OIDC_ISSUER_URI
@@ -220,6 +221,7 @@ spec:
               secretKeyRef:
                 name: {{ .Values.platform.properties.oidc.secretName }}
                 key: {{ .Values.platform.properties.oidc.clientSecret.secret.key }}
+          {{- end }}
           - name: JWT_SIGNING_KEY
             valueFrom:
               secretKeyRef:
