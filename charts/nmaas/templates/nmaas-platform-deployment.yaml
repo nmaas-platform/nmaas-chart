@@ -207,7 +207,7 @@ spec:
             value: {{ .Values.platform.properties.autoNamespaceCreationForDomains | quote }}
           - name: PORTAL_SSO_ALLOWED_FLAG
             value: {{ .Values.platform.properties.oidc.enabled | quote }}
-          {{- if .Values.properties.oidc.enabled }}
+          {{- if .Values.platform.properties.oidc.enabled }}
           - name: OIDC_CLIENT_ID
             value: {{ .Values.platform.properties.oidc.clientId | quote }}
           - name: OIDC_ISSUER_URI
