@@ -1,6 +1,6 @@
 # nmaas
 
-![Version: 2.0.2-alpha.2](https://img.shields.io/badge/Version-2.0.2--alpha.2-informational?style=flat-square) ![AppVersion: 1.8.0](https://img.shields.io/badge/AppVersion-1.8.0-informational?style=flat-square)
+![Version: 2.0.2-alpha.4](https://img.shields.io/badge/Version-2.0.2--alpha.4-informational?style=flat-square) ![AppVersion: latest](https://img.shields.io/badge/AppVersion-latest-informational?style=flat-square)
 
 GÉANT Network Management as a Service Helm chart for Kubernetes
 
