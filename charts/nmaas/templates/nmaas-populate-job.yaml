@@ -11,6 +11,8 @@ spec:
         image: "{{ .Values.platform.initscripts.image.repository }}:{{ .Values.platform.initscripts.image.tag }}"
         imagePullPolicy: {{ .Values.platform.initscripts.image.pullPolicy }}
         env:
+          - name: TEST_INSTANCE_FLAG
+            value: {{ .Values.platform.properties.testInstance | quote }}
           - name: PLATFORM_PORT
             value: "{{ .Values.platform.port }}"
           - name: PLATFORM_HOST
