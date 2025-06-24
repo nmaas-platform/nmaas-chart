@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: nmaas-populate-job
+  generateName: nmaas-populate-job-
 spec:
   template:
     spec:
