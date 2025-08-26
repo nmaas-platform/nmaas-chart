@@ -112,10 +112,6 @@ spec:
             value: {{ .Values.platform.properties.serviceDeploymentCheckInterval | quote }}
           - name: DEPLOYMENT_CHECK_TIMEOUT
             value: {{ .Values.platform.properties.serviceDeploymentCheckTimeout | quote }}
-          - name: JANITOR_ADDRESS
-            value: {{ .Values.platform.properties.janitorHost | default .Values.janitor.name }}
-          - name: JANITOR_PORT
-            value: {{ .Values.platform.properties.janitorPort | default .Values.janitor.targetPort | quote }}
           - name: API_KEY
             valueFrom:
               secretKeyRef:
