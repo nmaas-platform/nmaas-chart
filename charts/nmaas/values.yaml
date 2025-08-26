@@ -128,9 +128,9 @@ platform:
       asyncUpdateCron: "0 0 * * * ?"
     smtp:
       host: nmaas-postfix
-      # -- override default SMTP from value
+      # -- override default SMTP from value for email sent from the platform
       from: ""
-      # -- exposed as SMTP_FROM_DEFAULT_DOMAIN in global deployment parameters
+      # -- exposed as SMTP_FROM_DEFAULT_DOMAIN in global deployment parameters (app wizard)
       defaultDomain: 'example.com'
     k8s:
       ingress:
