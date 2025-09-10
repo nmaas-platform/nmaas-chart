@@ -1,6 +1,6 @@
 # nmaas
 
-![Version: 2.0.2-alpha.10](https://img.shields.io/badge/Version-2.0.2--alpha.10-informational?style=flat-square) ![AppVersion: 1.8.0](https://img.shields.io/badge/AppVersion-1.8.0-informational?style=flat-square)
+![Version: 2.0.2-alpha.12](https://img.shields.io/badge/Version-2.0.2--alpha.12-informational?style=flat-square) ![AppVersion: 1.8.0](https://img.shields.io/badge/AppVersion-1.8.0-informational?style=flat-square)
 
 GÉANT Network Management as a Service Helm chart for Kubernetes
 
@@ -48,6 +48,7 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | platform.image.tag | string | `"1.8.0"` |  |
 | platform.ingress.className | string | `""` | defaults to .Values.platform.properties.k8s.ingress.controller.ingressClass if not set |
 | platform.initscripts.enabled | bool | `true` |  |
+| platform.initscripts.generateName | bool | `false` |  |
 | platform.initscripts.image.pullPolicy | string | `"Always"` |  |
 | platform.initscripts.image.repository | string | `"artifactory.software.geant.org/nmaas-docker-local/nmaas-platform-populate"` |  |
 | platform.initscripts.image.tag | string | `"1.8.0-alfa.3"` |  |
