@@ -2,7 +2,11 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
+  {{- if .Values.platform.initscripts.generateName }}
   generateName: nmaas-populate-job-
+  {{- else }}
+  name: nmaas-populate-job-{{ randAlphaNum 8 | lower }}
+  {{- end }}
   annotations:
     argocd.argoproj.io/hook: Sync
 spec:

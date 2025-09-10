@@ -84,6 +84,7 @@ platform:
       key: secret
   initscripts:
     enabled: true
+    generateName: false
     image:
       repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-platform-populate
       tag: "1.8.0-alfa.3"
