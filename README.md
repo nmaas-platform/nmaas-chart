@@ -1,6 +1,6 @@
 # nmaas
 
-![Version: 2.0.2-alpha.8](https://img.shields.io/badge/Version-2.0.2--alpha.8-informational?style=flat-square) ![AppVersion: 1.8.0](https://img.shields.io/badge/AppVersion-1.8.0-informational?style=flat-square)
+![Version: 2.0.2-alpha.9](https://img.shields.io/badge/Version-2.0.2--alpha.9-informational?style=flat-square) ![AppVersion: 1.8.0](https://img.shields.io/badge/AppVersion-1.8.0-informational?style=flat-square)
 
 GÉANT Network Management as a Service Helm chart for Kubernetes
 
@@ -112,8 +112,8 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | platform.properties.serviceUpgradeInterval | int | `24` |  |
 | platform.properties.serviceUpgradeSummaryCron | string | `"0 0 6 * * ?"` | example "0 0 6 * * ?" - every day at 6:00 AM |
 | platform.properties.showDomainRegistrationSelector | bool | `true` |  |
-| platform.properties.smtp.defaultDomain | string | `"example.com"` | exposed as SMTP_FROM_DEFAULT_DOMAIN in global deployment parameters |
-| platform.properties.smtp.from | string | `""` | override default SMTP from value |
+| platform.properties.smtp.defaultDomain | string | `"example.com"` | exposed as SMTP_FROM_DEFAULT_DOMAIN in global deployment parameters (app wizard) |
+| platform.properties.smtp.from | string | `""` | override default SMTP from value for email sent from the platform |
 | platform.properties.smtp.host | string | `"nmaas-postfix"` |  |
 | platform.properties.testInstance | bool | `false` |  |
 | platform.readinessProbe.failureThreshold | int | `10` |  |
