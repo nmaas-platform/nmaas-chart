@@ -1,6 +1,6 @@
 # nmaas
 
-![Version: 2.0.2-alpha.12](https://img.shields.io/badge/Version-2.0.2--alpha.12-informational?style=flat-square) ![AppVersion: 1.8.0](https://img.shields.io/badge/AppVersion-1.8.0-informational?style=flat-square)
+![Version: 2.0.2-alpha.13](https://img.shields.io/badge/Version-2.0.2--alpha.13-informational?style=flat-square) ![AppVersion: 1.8.0](https://img.shields.io/badge/AppVersion-1.8.0-informational?style=flat-square)
 
 GÉANT Network Management as a Service Helm chart for Kubernetes
 
@@ -51,7 +51,7 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | platform.initscripts.generateName | bool | `false` |  |
 | platform.initscripts.image.pullPolicy | string | `"Always"` |  |
 | platform.initscripts.image.repository | string | `"artifactory.software.geant.org/nmaas-docker-local/nmaas-platform-populate"` |  |
-| platform.initscripts.image.tag | string | `"1.8.0-alfa.3"` |  |
+| platform.initscripts.image.tag | string | `"1.8.0"` |  |
 | platform.livenessProbe.failureThreshold | int | `10` |  |
 | platform.livenessProbe.httpGet.path | string | `"/actuator/health"` |  |
 | platform.livenessProbe.httpGet.port | int | `9001` |  |
