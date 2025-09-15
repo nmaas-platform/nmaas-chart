@@ -87,7 +87,7 @@ platform:
     generateName: false
     image:
       repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-platform-populate
-      tag: "1.8.0-alfa.3"
+      tag: "1.8.0"
       pullPolicy: Always
   properties:
     oidcUserLinking: true
