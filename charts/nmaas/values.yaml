@@ -26,7 +26,8 @@ platform:
   enabled: true
   name: nmaas-platform
   serviceAccountName: nmaas-platform
-  clusterRoleName: nmaas-shell-role
+  # -- name of ClusterRole to associate to nmaas-platform. Must exist beforehand
+  clusterRoleName: cluster-admin
   clusterRoleBindingName: nmaas-platform
   ingress:
     # -- defaults to .Values.platform.properties.k8s.ingress.controller.ingressClass if not set
@@ -61,7 +62,7 @@ platform:
     timeoutSeconds: 10
   image:
     repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-platform
-    tag: "1.7.1"
+    tag: "1.8.0"
     pullPolicy: IfNotPresent
   port: 9001
   targetPort: 9001
@@ -83,9 +84,10 @@ platform:
       key: secret
   initscripts:
     enabled: true
+    generateName: false
     image:
       repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-platform-populate
-      tag: "1.7.0"
+      tag: "1.8.0"
       pullPolicy: Always
   properties:
     oidcUserLinking: true
@@ -121,21 +123,15 @@ platform:
           name: nmaas-postgresql-secret
           key: secret
     helm:
-      address: nmaas-helm
-      username: helm
-      useLocalCharts: false
       repositoryName: nmaas
       repositoryUrl: https://artifactory.software.geant.org/artifactory/nmaas-helm
-      chartsDirectory: /home/nmaas/charts
-      enableTls: true
-      version: v3
       asyncUpdateEnabled: true
       asyncUpdateCron: "0 0 * * * ?"
     smtp:
       host: nmaas-postfix
-      # -- override default SMTP from value
+      # -- override default SMTP from value for email sent from the platform
       from: ""
-      # -- exposed as SMTP_FROM_DEFAULT_DOMAIN in global deployment parameters
+      # -- exposed as SMTP_FROM_DEFAULT_DOMAIN in global deployment parameters (app wizard)
       defaultDomain: 'example.com'
     k8s:
       ingress:
@@ -201,7 +197,7 @@ portal:
   name: nmaas-portal
   image:
     repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-portal
-    tag: "1.7.1"
+    tag: "1.8.0"
     pullPolicy: IfNotPresent
   ingress:
     # -- defaults to .Values.platform.properties.k8s.ingress.controller.ingressClass if not set
@@ -254,43 +250,6 @@ postfix:
         literal: ""
         secret:
           key: smtpPassword
-
-helm:
-  enabled: true
-  name: nmaas-helm
-  serviceAccountName: nmaas-helm
-  clusterRoleBindingName: nmaas-helm-admin
-  clusterRoleName: cluster-admin
-  image:
-    repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-helm-3
-    tag: "3.9.3"
-    pullPolicy: Always
-  port: 22
-  targetPort: 22
-  type: ClusterIP
-  properties:
-    users: helm:1000:1000
-  persistence:
-    enabled: true
-    # -- name of an existing claim to be used. If empty, a new one is provisioned.
-    existingClaim: ""
-    accessMode: ReadWriteOnce
-    size: 1Gi
-    storageClass: ""
-
-janitor:
-  enabled: true
-  name: nmaas-janitor
-  image:
-    repository: artifactory.software.geant.org/nmaas-docker-local/nmaas-janitor
-    tag: "1.7.0"
-    pullPolicy: IfNotPresent
-  port: 5000
-  targetPort: 5000
-  serviceAccountName: nmaas-janitor
-  clusterRoleName: janitor-role
-  clusterRoleBindingName: nmaas-janitor
-  type: ClusterIP
 
 # -- settings for in-cluster postgresql
 postgresql:

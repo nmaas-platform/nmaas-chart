@@ -53,8 +53,9 @@ spec:
         - name: platform-data
           mountPath: /nmaas/files
           subPath: platform-logs
-        - name: helm-access-key
-          mountPath: /nmaas/.ssh
+        - name: platform-data
+          mountPath: /home/nmaas/.config/helm
+          subPath: helm
         env:
           - name: ENVIRONMENT
             value: "{{ .Values.platform.properties.environment }}"
@@ -111,10 +112,6 @@ spec:
             value: {{ .Values.platform.properties.serviceDeploymentCheckInterval | quote }}
           - name: DEPLOYMENT_CHECK_TIMEOUT
             value: {{ .Values.platform.properties.serviceDeploymentCheckTimeout | quote }}
-          - name: JANITOR_ADDRESS
-            value: {{ .Values.platform.properties.janitorHost | default .Values.janitor.name }}
-          - name: JANITOR_PORT
-            value: {{ .Values.platform.properties.janitorPort | default .Values.janitor.targetPort | quote }}
           - name: API_KEY
             valueFrom:
               secretKeyRef:
@@ -137,23 +134,11 @@ spec:
           - name: USE_LOGIN_PASSWORD
             value: {{ and .Values.platform.properties.smtp.login .Values.platform.properties.smtp.password }}
           - name: USE_STARTTLS
-            value: {{ .Values.platform.properties.smtp.useStartTLS | default "false" | quote}}
-          - name: HELM_ADDRESS
-            value: "{{ .Values.platform.properties.helm.address }}"
-          - name: HELM_USERNAME
-            value: "{{ .Values.platform.properties.helm.username }}"
-          - name: HELM_USELOCALCHARTS
-            value: "{{ .Values.platform.properties.helm.useLocalCharts }}"
+            value: {{ .Values.platform.properties.smtp.useStartTLS | default "false" | quote }}
           - name: HELM_REPOSITORY
             value: "{{ .Values.platform.properties.helm.repositoryName }}"
           - name: HELM_REPOSITORY_URL
             value: "{{ .Values.platform.properties.helm.repositoryUrl }}"
-          - name: HELM_LOCALCHARTSDIR
-            value: "{{ .Values.platform.properties.helm.chartsDirectory }}"
-          - name: HELM_ENABLETLS
-            value: "{{ .Values.platform.properties.helm.enableTls }}"
-          - name: HELM_VERSION
-            value: "{{ .Values.platform.properties.helm.version }}"
           - name: HELM_UPDATE_ASYNC_ENABLED 
             value: "{{ .Values.platform.properties.helm.asyncUpdateEnabled }}"
           - name: HELM_UPDATE_ASYNC_CRON
@@ -218,6 +203,7 @@ spec:
             value: {{ .Values.platform.properties.autoNamespaceCreationForDomains | quote }}
           - name: PORTAL_SSO_ALLOWED_FLAG
             value: {{ .Values.platform.properties.oidc.enabled | quote }}
+          {{- if .Values.platform.properties.oidc.enabled }}
           - name: OIDC_CLIENT_ID
             value: {{ .Values.platform.properties.oidc.clientId | quote }}
           - name: OIDC_ISSUER_URI
@@ -231,6 +217,7 @@ spec:
               secretKeyRef:
                 name: {{ .Values.platform.properties.oidc.secretName }}
                 key: {{ .Values.platform.properties.oidc.clientSecret.secret.key }}
+          {{- end }}
           - name: JWT_SIGNING_KEY
             valueFrom:
               secretKeyRef:
