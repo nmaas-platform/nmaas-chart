@@ -92,6 +92,10 @@ platform:
   properties:
     oidcUserLinking: true
     multiInstanceSupport: false
+    # -- Indicates whether all nmaas projects on GitLab should be created within a dedicated top-level group
+    gitlabSharedInstance: false
+    # -- Name of the top-level group to host all nmaas projects
+    gitlabTopLevelGroupName:
     maintenance: false
     testInstance: false
     environment: prod
