@@ -1,6 +1,6 @@
 # nmaas
 
-![Version: 2.0.3](https://img.shields.io/badge/Version-2.0.3-informational?style=flat-square) ![AppVersion: 1.8.1](https://img.shields.io/badge/AppVersion-1.8.1-informational?style=flat-square)
+![Version: 2.0.4-alpha.1](https://img.shields.io/badge/Version-2.0.4--alpha.1-informational?style=flat-square) ![AppVersion: 1.8.1](https://img.shields.io/badge/AppVersion-1.8.1-informational?style=flat-square)
 
 GÉANT Network Management as a Service Helm chart for Kubernetes
 
@@ -73,6 +73,8 @@ GÉANT Network Management as a Service Helm chart for Kubernetes
 | platform.properties.captchaSecret.secret.name | string | `"nmaas-captcha-secret-secret"` |  |
 | platform.properties.defaultLanguage | string | `"en"` |  |
 | platform.properties.environment | string | `"prod"` |  |
+| platform.properties.gitlabSharedInstance | bool | `false` | Indicates whether all nmaas projects on GitLab should be created within a dedicated top-level group |
+| platform.properties.gitlabTopLevelGroupName | string | `nil` | Name of the top-level group to host all nmaas projects |
 | platform.properties.helm.asyncUpdateCron | string | `"0 0 * * * ?"` |  |
 | platform.properties.helm.asyncUpdateEnabled | bool | `true` |  |
 | platform.properties.helm.repositoryName | string | `"nmaas"` |  |
