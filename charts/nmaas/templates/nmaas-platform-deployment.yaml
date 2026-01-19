@@ -203,6 +203,12 @@ spec:
             value: {{ .Values.platform.properties.autoNamespaceCreationForDomains | quote }}
           - name: PORTAL_SSO_ALLOWED_FLAG
             value: {{ .Values.platform.properties.oidc.enabled | quote }}
+          - name: GITLAB_SHARED_INSTANCE
+            value: {{ .Values.platform.properties.gitlabSharedInstance | quote }}
+          {{- if .Values.platform.properties.gitlabSharedInstance }}
+          - name: GITLAB_TOP_LEVEL_GROUP_NAME
+            value: {{ .Values.platform.properties.gitlabTopLevelGroupName | quote }}
+          {{- end }}
           {{- if .Values.platform.properties.oidc.enabled }}
           - name: OIDC_CLIENT_ID
             value: {{ .Values.platform.properties.oidc.clientId | quote }}
